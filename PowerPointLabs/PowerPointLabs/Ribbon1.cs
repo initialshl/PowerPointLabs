@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.IO;
 using System.Linq;
@@ -42,6 +43,7 @@ using PowerPoint = Microsoft.Office.Interop.PowerPoint;
 namespace PowerPointLabs
 {
     [ComVisible(true)]
+    [SuppressMessage("Microsoft.StyleCop.CSharp.OrderingRules", "SA1202:ElementsMustBeOrderedByAccess", Justification = "Migration to Action Framework")]
     public class Ribbon1 : Office.IRibbonExtensibility
     {
         #region Action Framework Factory
@@ -1912,9 +1914,10 @@ namespace PowerPointLabs
 
             try
             {
-                var croppedShape = CropToShape.Crop(selection, isInPlace: true, handleError: false);
+                var magnifyRatio = 1.4f;
 
-                MagnifyGlassEffect(croppedShape, 1.4f);
+                var croppedShape = CropToShape.Crop(selection, magnifyRatio, isInPlace: true, handleError: false);
+                MagnifyGlassEffect(croppedShape, magnifyRatio);
             }
             catch (Exception e)
             {
