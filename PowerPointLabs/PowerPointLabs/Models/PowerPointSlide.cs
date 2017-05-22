@@ -62,11 +62,17 @@ namespace PowerPointLabs.Models
 
             PowerPointSlide powerPointSlide;
             if (slide.Name.Contains("PPTLabsSpotlight"))
+            {
                 powerPointSlide = PowerPointSpotlightSlide.FromSlideFactory(slide);
+            }
             else if (PowerPointAckSlide.IsAckSlide(slide))
+            {
                 powerPointSlide = PowerPointAckSlide.FromSlideFactory(slide);
+            }
             else
+            {
                 powerPointSlide = new PowerPointSlide(slide);
+            }
 
             if (includeIndicator)
             {
@@ -120,7 +126,11 @@ namespace PowerPointLabs.Models
         public string RetrieveDataFromNotes()
         {
             var text = NotesPageText;
-            if (!text.StartsWith(TextCollection.NotesPageStorageText)) return "";
+            if (!text.StartsWith(TextCollection.NotesPageStorageText))
+            {
+                return "";
+            }
+
             return text.Substring(TextCollection.NotesPageStorageText.Length);
         }
 
@@ -458,7 +468,10 @@ namespace PowerPointLabs.Models
             for (int i = 0; i < splitPath.Length; ++i)
             {
                 string token = splitPath[i].Trim();
-                if (token.Length <= 1 && char.IsLetter(token, 0)) continue;
+                if (token.Length <= 1 && char.IsLetter(token, 0))
+                {
+                    continue;
+                }
 
                 float val = float.Parse(token, CultureInfo.InvariantCulture);
                 if (isXCoordinate)
@@ -511,6 +524,12 @@ namespace PowerPointLabs.Models
             return ToShapeRange(shapes).Group();
         }
 
+        public ShapeRange ToShapeRange(Shape shape)
+        {
+            List<Shape> shapeList = new List<Shape> { shape };
+            return ToShapeRange(shapeList);
+        }
+
         public ShapeRange ToShapeRange(IEnumerable<Shape> shapes)
         {
             var shapeList = shapes.ToList();
@@ -539,6 +558,7 @@ namespace PowerPointLabs.Models
                 var newShape = _slide.Shapes.Paste()[1];
                 newShape.Left = shape.Left;
                 newShape.Top = shape.Top;
+                Graphics.MoveZToJustInFront(newShape, shape);
                 return newShape;
             }
             catch (COMException)
@@ -546,6 +566,28 @@ namespace PowerPointLabs.Models
                 // invalid shape for copy paste (e.g. a placeholder title box with no content)
                 return null;
             }
+        }
+
+        /// <summary>
+        /// Clones the specified shape onto the slide, leaving the range unmodified.
+        /// </summary>
+        public ShapeRange CloneShapeFromRange(ShapeRange range, Shape shapeToClone)
+        {
+            Shape clonedShape = this.CopyShapeToSlide(shapeToClone);
+
+            List<Shape> result = new List<Shape>();
+            foreach (Shape shape in range)
+            {
+                if (shape == shapeToClone)
+                {
+                    result.Add(clonedShape);
+                }
+                else
+                {
+                    result.Add(shape);
+                }
+            }
+            return this.ToShapeRange(result);
         }
 
         /// <summary>
@@ -626,8 +668,12 @@ namespace PowerPointLabs.Models
             for (int x = sequence.Count; x >= 1; x--)
             {
                 Effect effect = sequence[x];
-                if (effect.Shape.Name == sh.Name && effect.Shape.Id == sh.Id)
+                
+                if (effect.Shape == null || 
+                    (effect.Shape.Name == sh.Name && effect.Shape.Id == sh.Id))
+                {
                     effect.Delete();
+                }
             }
         }
 
@@ -772,8 +818,12 @@ namespace PowerPointLabs.Models
             {
                 Effect effect = sequence[x];
                 if (effect.Shape.Name == shape.Name && effect.Shape.Id == shape.Id)
+                {
                     if (effect.Exit == Office.MsoTriState.msoTrue)
+                    {
                         return true;
+                    }
+                }
             }
             return false;
         }
@@ -785,8 +835,12 @@ namespace PowerPointLabs.Models
             {
                 Effect effect = sequence[x];
                 if (effect.Shape.Name == shape.Name && effect.Shape.Id == shape.Id)
+                {
                     if (IsEntryEffect(effect))
+                    {
                         return true;
+                    }
+                }
             }
             return false;
         }
@@ -801,7 +855,9 @@ namespace PowerPointLabs.Models
             {
                 Effect effect = sequence[i];
                 if (effect.Shape.Name == shape.Name && effect.Shape.Id == shape.Id)
+                {
                     return i;
+                }
             }
             return -1;
         }
@@ -813,7 +869,10 @@ namespace PowerPointLabs.Models
 
         public Shape AddTemplateSlideMarker()
         {
-            if (HasTemplateSlideMarker()) return null;
+            if (HasTemplateSlideMarker())
+            {
+                return null;
+            }
 
             float ratio = 22.5f;
             float slideWidth = PowerPointPresentation.Current.SlideWidth;
@@ -909,7 +968,10 @@ namespace PowerPointLabs.Models
                         Shape sh = eff.Shape;
                         string motionPath = motion.MotionEffect.Path.Trim();
                         if (motionPath.Last() < 'A' || motionPath.Last() > 'Z')
+                        {
                             motionPath += " X";
+                        }
+
                         string[] path = motionPath.Split(' ');
                         int count = path.Length;
                         float xVal = Convert.ToSingle(path[count - 3]);
@@ -940,11 +1002,15 @@ namespace PowerPointLabs.Models
                 if (shapeToMatch.Id == sh.Id && HaveSameNames(shapeToMatch, sh))
                 {
                     if (tempMatchingShape == null)
+                    {
                         tempMatchingShape = sh;
+                    }
                     else
                     {
                         if (GetDistanceBetweenShapes(shapeToMatch, sh) < GetDistanceBetweenShapes(shapeToMatch, tempMatchingShape))
+                        {
                             tempMatchingShape = sh;
+                        }
                     }
                 }
             }
@@ -959,11 +1025,15 @@ namespace PowerPointLabs.Models
                 if (HaveSameNames(shapeToMatch, sh))
                 {
                     if (tempMatchingShape == null)
+                    {
                         tempMatchingShape = sh;
+                    }
                     else
                     {
                         if (GetDistanceBetweenShapes(shapeToMatch, sh) < GetDistanceBetweenShapes(shapeToMatch, tempMatchingShape))
+                        {
                             tempMatchingShape = sh;
+                        }
                     }
                 }
             }
@@ -1100,7 +1170,10 @@ namespace PowerPointLabs.Models
         /// </summary>
         public void MakeShapeNamesUnique(Func<Shape, bool> restrictTo = null)
         {
-            if (restrictTo == null) restrictTo = shape => true;
+            if (restrictTo == null)
+            {
+                restrictTo = shape => true;
+            }
 
             var currentNames = new HashSet<string>();
             var shapes = _slide.Shapes.Cast<Shape>().Where(restrictTo);
@@ -1152,7 +1225,9 @@ namespace PowerPointLabs.Models
                 foreach (Shape sh in _slide.NotesPage.Shapes)
                 {
                     if (sh.TextFrame.HasText == MsoTriState.msoTrue)
+                    {
                         sh.TextEffect.Text = "";
+                    }
                 }
             }
         }
@@ -1162,7 +1237,9 @@ namespace PowerPointLabs.Models
             foreach (Shape sh in _slide.Shapes)
             {
                 if (sh.Type == MsoShapeType.msoMedia)
+                {
                     sh.Delete();
+                }
             }
         }
 

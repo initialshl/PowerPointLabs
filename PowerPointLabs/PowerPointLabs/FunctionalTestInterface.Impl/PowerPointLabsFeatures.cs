@@ -30,6 +30,16 @@ namespace PowerPointLabs.FunctionalTestInterface.Impl
             get { return HighlightLabController.Instance; }
         }
 
+        public ISyncLabController SyncLab
+        {
+            get { return SyncLabController.Instance; }
+        }
+
+        public ITimerLabController TimerLab
+        {
+            get { return TimerLabController.Instance; }
+        }
+
         private Ribbon1 Ribbon
         {
             get { return FunctionalTestExtensions.GetRibbonUi(); }
@@ -39,8 +49,40 @@ namespace PowerPointLabs.FunctionalTestInterface.Impl
         {
             UIThreadExecutor.Execute(() =>
             {
-                Ribbon.CropShapeButtonClick(new RibbonControl("AutoCrop"));
+                var control = new RibbonControl("MoveCropShapeButton");
+                Ribbon.OnAction(control);
             });
+        }
+
+        public void CropOutPadding()
+        {
+            UIThreadExecutor.Execute(() =>
+            {
+                var control = new RibbonControl("CropOutPaddingButton");
+                Ribbon.OnAction(control);
+            });
+        }
+
+        public void CropToAspectRatioW1H10()
+        {
+            UIThreadExecutor.Execute(() =>
+            {
+                var control = new RibbonControl("CropToAspectRatioOption1_10");
+                control.Tag = "CropToAspectRatio";
+                Ribbon.OnAction(control);
+            });
+        }
+
+        public void CropToSlide()
+        {
+            var control = new RibbonControl("CropToSlideButton");
+            Ribbon.OnAction(control);
+        }
+
+        public void CropToSame()
+        {
+            var control = new RibbonControl("CropToSameButton");
+            Ribbon.OnAction(control);
         }
 
         public void AutoAnimate()

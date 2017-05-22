@@ -4,6 +4,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
+using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
@@ -12,7 +13,9 @@ using System.Windows.Media.Imaging;
 
 using Microsoft.Office.Core;
 using Microsoft.Office.Interop.PowerPoint;
+
 using PowerPointLabs.Models;
+
 using PPExtraEventHelper;
 
 using Drawing = System.Drawing;
@@ -26,6 +29,8 @@ namespace PowerPointLabs.Utils
     public static class Graphics
     {
 #pragma warning disable 0618
+        private static Object fileLock = new object();
+
         #region Const
         public const float PictureExportingRatio = 96.0f / 72.0f;
         private const float TargetDpi = 96.0f;
@@ -52,9 +57,19 @@ namespace PowerPointLabs.Utils
 
         public static void ExportShape(Shape shape, string exportPath)
         {
-            var slideWidth = (int)PowerPointPresentation.Current.SlideWidth;
-            var slideHeight = (int)PowerPointPresentation.Current.SlideHeight;
-
+            int slideWidth = 0;
+            int slideHeight = 0;
+            try
+            {
+                slideWidth = (int)PowerPointPresentation.Current.SlideWidth;
+                slideHeight = (int)PowerPointPresentation.Current.SlideHeight;
+            }
+            catch (NullReferenceException)
+            {
+                // Getting Presentation.Current may throw NullReferenceException during unit testing
+                shape.Export(exportPath, PpShapeFormat.ppShapeFormatPNG, ExportMode: PpExportMode.ppScaleToFit);
+            }
+            
             shape.Export(exportPath, PpShapeFormat.ppShapeFormatPNG, slideWidth,
                          slideHeight, PpExportMode.ppScaleToFit);
         }
@@ -66,6 +81,35 @@ namespace PowerPointLabs.Utils
 
             shapeRange.Export(exportPath, PpShapeFormat.ppShapeFormatPNG, slideWidth,
                               slideHeight, PpExportMode.ppScaleToFit);
+        }
+
+        public static Bitmap ShapeToBitmap(Shape shape)
+        {
+            // we need a lock here to prevent race conditions on the temporary file
+            lock (fileLock)
+            {
+                string fileName = TextCollection.TemporaryImageStorageFileName;
+                string tempPicPath = Path.Combine(Path.GetTempPath(), fileName);
+                ExportShape(shape, tempPicPath);
+
+                Image image = Image.FromFile(tempPicPath);
+                Bitmap bitmap = new Bitmap(image);
+                // free up the original file to be deleted
+                image.Dispose();
+
+                FileInfo file = new FileInfo(Path.GetTempPath() + fileName);
+                if (file.Exists)
+                {
+                    file.Delete();
+                }
+                return bitmap;
+            }
+        }
+
+        public static bool IsClipboardEmpty()
+        {
+            IDataObject clipboardData = Clipboard.GetDataObject();
+            return clipboardData == null || clipboardData.GetFormats().Length == 0;
         }
 
         public static void FitShapeToSlide(ref Shape shapeToMove)
@@ -95,6 +139,13 @@ namespace PowerPointLabs.Utils
                     (shape.Type == MsoShapeType.msoAutoShape &&
                      shape.AutoShapeType == MsoAutoShapeType.msoShapeMixed &&
                      shape.ConnectorFormat.Type == MsoConnectorType.msoConnectorStraight);
+        }
+
+        public static bool IsShape(Shape shape)
+        {
+            return shape.Type == MsoShapeType.msoAutoShape
+                || shape.Type == MsoShapeType.msoFreeform
+                || shape.Type == MsoShapeType.msoGroup;
         }
 
         public static bool IsSamePosition(Shape refShape, Shape candidateShape,
@@ -132,6 +183,32 @@ namespace PowerPointLabs.Utils
                    refShape.Type == candidateShape.Type &&
                    (refShape.Type != MsoShapeType.msoAutoShape ||
                    refShape.AutoShapeType == candidateShape.AutoShapeType);
+        }
+
+        public static ShapeRange GetShapesWhenTypeMatches(PowerPointSlide slide, ShapeRange shapes, MsoShapeType type)
+        {
+            List<Shape> newShapeList = new List<Shape>();
+            foreach (Shape shape in shapes)
+            {
+                if (shape.Type == type)
+                {
+                    newShapeList.Add(shape);
+                }
+            }
+            return slide.ToShapeRange(newShapeList);
+        }
+
+        public static ShapeRange GetShapesWhenTypeNotMatches(PowerPointSlide slide, ShapeRange shapes, MsoShapeType type)
+        {
+            List<Shape> newShapeList = new List<Shape>();
+            foreach (Shape shape in shapes)
+            {
+                if (shape.Type != type)
+                {
+                    newShapeList.Add(shape);
+                }
+            }
+            return slide.ToShapeRange(newShapeList);
         }
 
         public static void MakeShapeViewTimeInvisible(Shape shape, Slide curSlide)
@@ -195,7 +272,10 @@ namespace PowerPointLabs.Utils
             {
                 succeeded = false;
             }
-            if (succeeded) return;
+            if (succeeded)
+            {
+                return;
+            }
 
             candidateShape.Delete();
             refShape.Copy();
@@ -269,7 +349,10 @@ namespace PowerPointLabs.Utils
                                                                                                  false, 15) &&
                                                                                   IsSameSize(item, candidateShape));
 
-                if (candidateShape == null || refShape == null) continue;
+                if (candidateShape == null || refShape == null)
+                {
+                    continue;
+                }
 
                 candidateShape.Name = refShape.Name;
             }
@@ -437,23 +520,31 @@ namespace PowerPointLabs.Utils
 
         public static float GetScaleWidth(Shape shape)
         {
+            var isAspectRatioLocked = shape.LockAspectRatio;
+            shape.LockAspectRatio = MsoTriState.msoFalse;
+
             float oldWidth = shape.Width;
             shape.ScaleWidth(1, MsoTriState.msoCTrue);
             float scaleFactorWidth = oldWidth / shape.Width;
 
             shape.ScaleWidth(scaleFactorWidth, MsoTriState.msoCTrue);
 
+            shape.LockAspectRatio = isAspectRatioLocked;
             return scaleFactorWidth;
         }
 
         public static float GetScaleHeight(Shape shape)
         {
+            var isAspectRatioLocked = shape.LockAspectRatio;
+            shape.LockAspectRatio = MsoTriState.msoFalse;
+
             float oldHeight = shape.Height;
             shape.ScaleHeight(1, MsoTriState.msoCTrue);
             float scaleFactorHeight = oldHeight / shape.Height;
 
             shape.ScaleHeight(scaleFactorHeight, MsoTriState.msoCTrue);
 
+            shape.LockAspectRatio = isAspectRatioLocked;
             return scaleFactorHeight;
         }
 
@@ -549,7 +640,10 @@ namespace PowerPointLabs.Utils
         {
             try
             {
-                if (shape.Line.Visible != MsoTriState.msoTrue) return false;
+                if (shape.Line.Visible != MsoTriState.msoTrue)
+                {
+                    return false;
+                }
                 shape.Line.BeginArrowheadStyle = shape.Line.BeginArrowheadStyle;
                 return true;
             }
@@ -623,7 +717,10 @@ namespace PowerPointLabs.Utils
         {
             var textFrame2 = textRange2.Parent as TextFrame2;
 
-            if (textFrame2 == null) return null;
+            if (textFrame2 == null)
+            {
+                return null;
+            }
 
             var shape = textFrame2.Parent as Shape;
 
@@ -738,7 +835,10 @@ namespace PowerPointLabs.Utils
 
         private static void AddDisappearAnimation(Shape shape, PowerPointSlide inSlide, int effectStartIndex)
         {
-            if (inSlide.HasExitAnimation(shape)) return;
+            if (inSlide.HasExitAnimation(shape))
+            {
+                return;
+            }
 
             var effectFade = inSlide.GetNativeSlide().TimeLine.MainSequence.AddEffect(shape, MsoAnimEffect.msoAnimEffectAppear,
                 MsoAnimateByLevel.msoAnimateLevelNone, MsoAnimTriggerType.msoAnimTriggerWithPrevious, effectStartIndex);
@@ -747,7 +847,10 @@ namespace PowerPointLabs.Utils
 
         private static void AddAppearAnimation(Shape shape, PowerPointSlide inSlide, int effectStartIndex)
         {
-            if (inSlide.HasEntryAnimation(shape)) return;
+            if (inSlide.HasEntryAnimation(shape))
+            {
+                return;
+            }
 
             var effectFade = inSlide.GetNativeSlide().TimeLine.MainSequence.AddEffect(shape, MsoAnimEffect.msoAnimEffectAppear,
                 MsoAnimateByLevel.msoAnimateLevelNone, MsoAnimTriggerType.msoAnimTriggerWithPrevious, effectStartIndex);

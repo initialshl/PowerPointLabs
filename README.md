@@ -22,13 +22,30 @@ Interested to contribute? Please take a moment to review the [guidelines for con
 1. Turn off *Office Version Upgrading*: Open the solution `PowerPointLabs\PowerPointLabs.sln` >> open Tools (menu) >> Options >> Office Tools >> Project Migration >> uncheck ‘Always upgrade to installed version of Office’.
 2. Set up *External Office Program*: Open ‘PowerPointLabs’ Properties >> Debug >> select ‘Start external program’ and choose `POWERPNT.exe` in the Office folder. Ensure that both **Debug** and **Release** configurations have set up this.
 3. Run the solution by pressing F5 and then PowerPointLabs tab will appear in the PowerPoint ribbon. If you have installed PowerPointLabs add-in, you may have to uninstall it first and rebuild the solution.
-4. If failed to build PowerPointLabs solution, try to install `VSTO for PowerPoint` from the link inside [this file](https://github.com/PowerPointLabs/PowerPointLabs-Website/blob/master/vsto-redirect.html).
+4. If failed to build PowerPointLabs solution, try to install `VSTO for PowerPoint` from [this link](http://powerpointlabs.info/vsto-redirect.html).
 
 ### Testing
 0. Click Build (menu) >> Rebuild Solution.
 1. Click Test (menu) >> Windows >> Test Explorer. 
 2. In the open Test Explorer window, click `Group by Traits` >> right click `FT` >> click `Run Selected Tests`. During the test, *DO NOT move the mouse & ensure the Windows UI is in English*.
 3. In the open Test Explorer window, click `Group by Traits` >> right click `UT` >> click `Run Selected Tests`.
+
+### Current Dev Team
+
+Mentors: Damith C. Rajapakse, Xie Kai
+
+Team Leads: Yan Min Oo, Yu Ting
+
+Senior Devs: Fiona Chang, Hanyang Liu, Victor Hazali, Oh Shunhao 
+
+Area | Responsibilities | Lead | Co-Lead | Past Leads
+-----|------------------|------|---------|-----|
+Community | communit growth, user support | Kenneth Loh | HengLe | Fiona |
+Docs | Website, tutorials, dev docs | Jamos Tay | Shi Ya | Fiona|
+DevOps | Installer, issue tracker, releases, CI | Syed Abdullah | Kenneth | Hanyang|
+Quality | code quality, design quality | Ong Heng Le | Jamos | Kai|
+Testing | test coverage, test automation | Ian Teo | Syed | Kai|
+UI/UX | UI matters, UX matters | Ang Shi Ya | Ian | |
 
 ### Acknowledgements
 PowerPointLabs is developed at the School of Computing, National University of Singapore, with funding from an NUS Learning Innovation Fund, Technology (LIFT) grant.

@@ -41,10 +41,10 @@
     </NuGetPackageImportStamp>
     <StyleCopTreatErrorsAsWarnings>false</StyleCopTreatErrorsAsWarnings>
     <BootstrapperEnabled>true</BootstrapperEnabled>
-    <PublishUrl>D:\PPTLabs\</PublishUrl>
+    <PublishUrl>C:\Users\initialsHL\Desktop\PPTLabs_Publish\</PublishUrl>
     <InstallUrl>http://www.comp.nus.edu.sg/~pptlabs/download/dev/</InstallUrl>
     <TargetCulture>en</TargetCulture>
-    <ApplicationVersion>2.8.7.15</ApplicationVersion>
+    <ApplicationVersion>2.8.7.20</ApplicationVersion>
     <AutoIncrementApplicationRevision>false</AutoIncrementApplicationRevision>
     <UpdateEnabled>true</UpdateEnabled>
     <UpdateInterval>0</UpdateInterval>
@@ -159,7 +159,7 @@
   </PropertyGroup>
   <!--
     This section enables pre- and post-build steps. However, in VSTO use
-    MSBuild tasks instead of these properties.       
+    MSBuild tasks instead of these properties.
   -->
   <PropertyGroup>
     <PreBuildEvent>
@@ -246,22 +246,38 @@
   </ItemGroup>
   <!--
     This section defines the user source files that are part of the project.
-     
+
     A "Compile" element specifies a source file to compile.
     An "EmbeddedResource" element specifies an .resx file for embedded resources.
-    A "None" element specifies a file that is not to be passed to the compiler (for instance, 
+    A "None" element specifies a file that is not to be passed to the compiler (for instance,
     a text file or XML file).
     The "AppDesigner" element specifies the directory where the application properties files
     can be found.
   -->
   <ItemGroup>
+    <Compile Include="ActionFramework\Action\CropLabActionHandler.cs" />
+    <Compile Include="ActionFramework\Action\CropLabSettingsActionHandler.cs" />
+    <Compile Include="ActionFramework\Action\CropToSameActionHandler.cs" />
+    <Compile Include="ActionFramework\Action\CropToSlideActionHandler.cs" />
+    <Compile Include="ActionFramework\Action\PasteLab\PasteLabActionHandler.cs" />
+    <Compile Include="ActionFramework\Action\SyncLabActionHandler.cs" />
+    <Compile Include="ActionFramework\Action\MoveCropShapeButtonActionHandler.cs" />
+    <Compile Include="ActionFramework\Action\CropToAspectRatioActionHandler.cs" />
+    <Compile Include="ActionFramework\Action\CropOutPaddingActionHandler.cs" />
     <Compile Include="ActionFramework\Action\AddShapeActionHandler.cs" />
+    <Compile Include="ActionFramework\Action\PasteLab\PasteAtCursorPositionActionHandler.cs" />
+    <Compile Include="ActionFramework\Action\PasteLab\PasteAtOriginalPositionActionHandler.cs" />
+    <Compile Include="ActionFramework\Action\MergeIntoGroupActionHandler.cs" />
+    <Compile Include="ActionFramework\Action\PasteLab\PasteIntoGroupActionHandler.cs" />
+    <Compile Include="ActionFramework\Action\PasteLab\ReplaceWithClipboardActionHandler.cs" />
     <Compile Include="ActionFramework\Action\ShapeMenuActionHandler.cs" />
     <Compile Include="ActionFramework\Action\ShapesLabActionHandler.cs" />
+    <Compile Include="ActionFramework\Action\PasteLab\PasteToFillSlideActionHandler.cs" />
     <Compile Include="ActionFramework\Action\RemoveHighlightingActionHandler.cs" />
     <Compile Include="ActionFramework\Action\EffectsLabBlurrinessActionHandler.cs" />
     <Compile Include="ActionFramework\Action\PositionsLabActionHandler.cs" />
     <Compile Include="ActionFramework\Action\ResizeLabActionHandler.cs" />
+    <Compile Include="ActionFramework\Action\TimerLabActionHandler.cs" />
     <Compile Include="ActionFramework\CheckBoxAction\EffectsLabBlurrinessCheckBoxActionHandler.cs" />
     <Compile Include="ActionFramework\CheckBoxAction\EmptyCheckBoxActionHandler.cs" />
     <Compile Include="ActionFramework\Common\Attribute\ExportCheckBoxActionRibbonIdAttribute.cs" />
@@ -275,14 +291,14 @@
     <Compile Include="ActionFramework\Common\Extension\FunctionalTestExtensions.cs" />
     <Compile Include="ActionFramework\Common\Factory\CheckBoxActionHandlerFactory.cs" />
     <Compile Include="ActionFramework\Common\Extension\ContentControlExtensions.cs" />
-    <Compile Include="ActionFramework\Common\Extension\BaseActionHandlerExtensions.cs" />
+    <Compile Include="ActionFramework\Common\Extension\BaseHandlerExtensions.cs" />
     <Compile Include="ActionFramework\Common\Factory\ActionHandlerFactory.cs" />
     <Compile Include="ActionFramework\Action\FitToHeightActionHandler.cs" />
     <Compile Include="ActionFramework\Action\FitToWidthActionHandler.cs" />
     <Compile Include="ActionFramework\Common\Factory\ContentHandlerFactory.cs" />
     <Compile Include="ActionFramework\Common\Factory\EnabledHandlerFactory.cs" />
     <Compile Include="ActionFramework\Common\Factory\PressedHandlerFactory.cs" />
-    <Compile Include="ActionFramework\Common\Interface\BaseActionHandler.cs" />
+    <Compile Include="ActionFramework\Common\Interface\BaseHandler.cs" />
     <Compile Include="ActionFramework\Common\Interface\CheckBoxActionHandler.cs" />
     <Compile Include="ActionFramework\Common\Interface\ActionHandler.cs" />
     <Compile Include="ActionFramework\Common\Factory\BaseHandlerFactory.cs" />
@@ -293,11 +309,40 @@
     <Compile Include="ActionFramework\Common\Interface\PressedHandler.cs" />
     <Compile Include="ActionFramework\Common\Log\Logger.cs" />
     <Compile Include="ActionFramework\Common\Log\LogType.cs" />
+    <Compile Include="ActionFramework\Content\CropToAspectRatioContentHandler.cs" />
     <Compile Include="ActionFramework\Content\EffectsLabBlurrinessContentHandler.cs" />
     <Compile Include="ActionFramework\Content\EmptyContentHandler.cs" />
+    <Compile Include="ActionFramework\Enabled\PasteLab\PasteAtCursorPositionEnabledHandler.cs" />
+    <Compile Include="ActionFramework\Enabled\PasteLab\PasteAtOriginalPositionEnabledHandler.cs" />
+    <Compile Include="ActionFramework\Enabled\MergeIntoGroupEnabledHandler.cs" />
+    <Compile Include="ActionFramework\Enabled\PasteLab\PasteIntoGroupEnabledHandler.cs" />
+    <Compile Include="ActionFramework\Enabled\PasteLab\ReplaceWithClipboardEnabledHandler.cs" />
+    <Compile Include="ActionFramework\Image\CropLabMenuImageHandler.cs" />
+    <Compile Include="ActionFramework\Image\CropLabSettingsImageHandler.cs" />
+    <Compile Include="ActionFramework\Image\CropShapeMenuImageHandler.cs" />
+    <Compile Include="ActionFramework\Image\CropOutPaddingImageHandler.cs" />
+    <Compile Include="ActionFramework\Image\CropToSameImageHandler.cs" />
+    <Compile Include="ActionFramework\Image\CropToSlideImageHandler.cs" />
+    <Compile Include="ActionFramework\Image\MoveCropShapeImageHandler.cs" />
+    <Compile Include="ActionFramework\Image\CropToAspectRatioImageHandler.cs" />
     <Compile Include="ActionFramework\Enabled\EmptyEnabledHandler.cs" />
     <Compile Include="ActionFramework\Image\AddShapeImageHandler.cs" />
+    <Compile Include="ActionFramework\Image\PasteLab\PasteAtCursorPositionImageHandler.cs" />
+    <Compile Include="ActionFramework\Image\PasteLab\PasteAtOriginalPositionImageHandler.cs" />
+    <Compile Include="ActionFramework\Image\MergeIntoGroupImageHandler.cs" />
+    <Compile Include="ActionFramework\Image\PasteLab\PasteIntoGroupImageHandler.cs" />
+    <Compile Include="ActionFramework\Image\PasteLab\ReplaceWithClipboardImageHandler.cs" />
+    <Compile Include="ActionFramework\Image\SyncLabImageHandler.cs" />
+    <Compile Include="ActionFramework\Image\Group\AnimationLabImageHandler.cs" />
+    <Compile Include="ActionFramework\Image\Group\SmallHelpImageHandler.cs" />
+    <Compile Include="ActionFramework\Image\Group\ZoomLabImageHandler.cs" />
+    <Compile Include="ActionFramework\Image\Group\CaptionLabImageHandler.cs" />
+    <Compile Include="ActionFramework\Image\Group\HighlightLabImageHandler.cs" />
+    <Compile Include="ActionFramework\Image\Group\NarrationsLabImageHandler.cs" />
+    <Compile Include="ActionFramework\Image\Group\MoreLabsImageHandler.cs" />
     <Compile Include="ActionFramework\Image\ShapesLabImageHandler.cs" />
+    <Compile Include="ActionFramework\Enabled\PasteLab\PasteToFillSlideEnabledHandler.cs" />
+    <Compile Include="ActionFramework\Image\PasteLab\PasteToFillSlideImageHandler.cs" />
     <Compile Include="ActionFramework\Image\RemoveHighlightingImageHandler.cs" />
     <Compile Include="ActionFramework\Image\EffectsLabBlurSelectedImageHandler.cs" />
     <Compile Include="ActionFramework\Image\PositionsLabImageHandler.cs" />
@@ -308,8 +353,24 @@
     <Compile Include="ActionFramework\Image\FitToWidthImageHandler.cs" />
     <Compile Include="ActionFramework\Common\Interface\ImageHandler.cs" />
     <Compile Include="ActionFramework\Common\Attribute\ExportLabelRibbonIdAttribute.cs" />
+    <Compile Include="ActionFramework\Image\TimerLabImageHandler.cs" />
+    <Compile Include="ActionFramework\Label\CropLabSettingsLabelHandler.cs" />
+    <Compile Include="ActionFramework\Label\CropToSlideLabelHandler.cs" />
+    <Compile Include="ActionFramework\Label\CropLabMenuLabelHandler.cs" />
+    <Compile Include="ActionFramework\Label\MoveCropShapeLabelHandler.cs" />
+    <Compile Include="ActionFramework\Label\CropToSameLabelHandler.cs" />
+    <Compile Include="ActionFramework\Label\CropToAspectRatioLabelHandler.cs" />
+    <Compile Include="ActionFramework\Label\CropToAspectRatioOptionsLabelHandler.cs" />
+    <Compile Include="ActionFramework\Label\CropOutPaddingLabelHandler.cs" />
     <Compile Include="ActionFramework\Label\AddShapeLabelHandler.cs" />
+    <Compile Include="ActionFramework\Label\MergeIntoGroupLabelHandler.cs" />
+    <Compile Include="ActionFramework\Label\PasteLab\PasteIntoGroupLabelHandler.cs" />
+    <Compile Include="ActionFramework\Label\PasteLab\PasteAtCursorPositionLabelHandler.cs" />
+    <Compile Include="ActionFramework\Label\PasteLab\PasteAtOriginalPositionLabelHandler.cs" />
+    <Compile Include="ActionFramework\Label\PasteLab\ReplaceWithClipboardLabelHandler.cs" />
+    <Compile Include="ActionFramework\Label\SyncLabLabelHandler.cs" />
     <Compile Include="ActionFramework\Label\ShapesLabLabelHandler.cs" />
+    <Compile Include="ActionFramework\Label\PasteLab\PasteToFillSlideLabelHandler.cs" />
     <Compile Include="ActionFramework\Label\RemoveHighlightingLabelHandler.cs" />
     <Compile Include="ActionFramework\Label\EffectsLabBlurrinessLabelHandler.cs" />
     <Compile Include="ActionFramework\Label\EffectsLabBlurSelectedLabelHandler.cs" />
@@ -322,8 +383,17 @@
     <Compile Include="ActionFramework\Label\FitToWidthLabelHandler.cs" />
     <Compile Include="ActionFramework\Common\Interface\LabelHandler.cs" />
     <Compile Include="ActionFramework\Common\Attribute\ExportSupertipRibbonIdAttribute.cs" />
+    <Compile Include="ActionFramework\Label\TimerLabLabelHandler.cs" />
     <Compile Include="ActionFramework\Pressed\EffectsLabBlurrinessPressedHandler.cs" />
     <Compile Include="ActionFramework\Pressed\EmptyPressedHandler.cs" />
+    <Compile Include="ActionFramework\Supertip\CropLabSettingsSupertipHandler.cs" />
+    <Compile Include="ActionFramework\Supertip\CropToSameSupertipHandler.cs" />
+    <Compile Include="ActionFramework\Supertip\MoveCropShapeSupertipHandler.cs" />
+    <Compile Include="ActionFramework\Supertip\CropToSlideSupertipHandler.cs" />
+    <Compile Include="ActionFramework\Supertip\CropLabMenuSupertipHandler.cs" />
+    <Compile Include="ActionFramework\Supertip\CropToAspectRatioSupertipHandler.cs" />
+    <Compile Include="ActionFramework\Supertip\CropOutPaddingSupertipHandler.cs" />
+    <Compile Include="ActionFramework\Supertip\SyncLabSupertipHandler.cs" />
     <Compile Include="ActionFramework\Supertip\ShapesLabSupertipHandler.cs" />
     <Compile Include="ActionFramework\Supertip\RemoveHighlightingSupertipHandler.cs" />
     <Compile Include="ActionFramework\Supertip\EffectsLabBlurSelectedSupertipHandler.cs" />
@@ -334,6 +404,8 @@
     <Compile Include="ActionFramework\Common\Factory\SupertipHandlerFactory.cs" />
     <Compile Include="ActionFramework\Common\Interface\SupertipHandler.cs" />
     <Compile Include="ActionFramework\Supertip\ResizeLabSupertipHandler.cs" />
+    <Compile Include="ActionFramework\Supertip\TimerLabSupertipHandler.cs" />
+    <Compile Include="ActionFramework\Util\BaseUtilActionHandler.cs" />
     <Compile Include="AgendaLab\AgendaLabSyncFunctions.cs" />
     <Compile Include="AgendaLab\AgendaLabTemplateSyncLogic.cs" />
     <Compile Include="AgendaLab\AgendaLabUtility.cs" />
@@ -361,6 +433,22 @@
       <DependentUpon>ColorInformationDialog.cs</DependentUpon>
     </Compile>
     <Compile Include="ColorPicker\HSLColor.cs" />
+    <Compile Include="Converters\CropLab\EnumToBooleanConverter.cs" />
+    <Compile Include="CropLab\CropLabException.cs" />
+    <Compile Include="CropLab\CropLabDummyMessageService.cs" />
+    <Compile Include="CropLab\CropLabOperationException.cs" />
+    <Compile Include="CropLab\CropLabMessageService.cs" />
+    <Compile Include="CropLab\CropLabSettings.cs" />
+    <Compile Include="CropLab\CropToAspectRatio.cs" />
+    <Compile Include="CropLab\CropOutPadding.cs" />
+    <Compile Include="CropLab\CropToSlide.cs" />
+    <Compile Include="CropLab\CropToSame.cs" />
+    <Compile Include="CropLab\CropLabSettingsDialog.xaml.cs">
+      <DependentUpon>CropLabSettingsDialog.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="CropLab\CustomAspectRatioDialog.xaml.cs">
+      <DependentUpon>CustomAspectRatioDialog.xaml</DependentUpon>
+    </Compile>
     <Compile Include="ColorPicker\Magnifier.xaml.cs">
       <DependentUpon>Magnifier.xaml</DependentUpon>
     </Compile>
@@ -392,6 +480,7 @@
     <Compile Include="Converters\DrawingsLab\EnumMatchToBooleanConverter.cs" />
     <Compile Include="Converters\DrawingsLab\FloatToStringConverter.cs" />
     <Compile Include="Converters\DrawingsLab\IntToStringConverter.cs" />
+    <Compile Include="CropLab\CropLabErrorHandler.cs" />
     <Compile Include="CustomBinding.cs" />
     <Compile Include="CustomControls\BufferedFlowLayoutPanel.cs">
       <SubType>Component</SubType>
@@ -399,6 +488,7 @@
     <Compile Include="CustomControls\BufferedPanel.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="CustomControls\MessageService.cs" />
     <Compile Include="DataSources\ColorDataSource.cs" />
     <Compile Include="ColorPicker\ColorHelper.cs" />
     <Compile Include="ColorPicker\ColorPane.cs">
@@ -408,7 +498,7 @@
       <DependentUpon>ColorPane.cs</DependentUpon>
     </Compile>
     <Compile Include="ConvertToPicture.cs" />
-    <Compile Include="CropToShape.cs" />
+    <Compile Include="CropLab\CropToShape.cs" />
     <Compile Include="DataSources\DrawingLabData.cs" />
     <Compile Include="DataSources\DrawingsLabMultiCloneGridDataSource.cs" />
     <Compile Include="DataSources\DrawingsLabPivotAroundDataSource.cs" />
@@ -442,7 +532,9 @@
       <DependentUpon>DrawingsPaneWPF.xaml</DependentUpon>
     </Compile>
     <Compile Include="EffectsLab\EffectsLabBlurSelected.cs" />
+    <Compile Include="FunctionalTestInterface.Impl\Controller\TimerLabController.cs" />
     <Compile Include="FunctionalTestInterface.Impl\Controller\HighlightLabController.cs" />
+    <Compile Include="FunctionalTestInterface.Impl\Controller\SyncLabController.cs" />
     <Compile Include="FunctionalTestInterface.Impl\Controller\PositionsLabController.cs" />
     <Compile Include="FunctionalTestInterface.Impl\Controller\ColorsLabController.cs" />
     <Compile Include="FunctionalTestInterface.Impl\Controller\ShapesLabController.cs" />
@@ -455,6 +547,11 @@
     <Compile Include="FunctionalTestInterface.Impl\PowerPointLabsFT.cs" />
     <Compile Include="FunctionalTestInterface.Impl\PowerPointOperations.cs" />
     <Compile Include="FunctionalTestInterface.Impl\SlideData.cs" />
+    <Compile Include="MiscFeatures\MergeIntoGroup.cs" />
+    <Compile Include="PasteLab\PasteAtPosition.cs" />
+    <Compile Include="PasteLab\PasteIntoGroup.cs" />
+    <Compile Include="PasteLab\PasteToFillSlide.cs" />
+    <Compile Include="PasteLab\ReplaceWithClipboard.cs" />
     <Compile Include="PictureSlidesLab\ModelFactory\Options\FrostedGlassTextBoxStyleOptions.cs" />
     <Compile Include="PictureSlidesLab\ModelFactory\Options\FrostedGlassBannerStyleOptions.cs" />
     <Compile Include="PictureSlidesLab\ModelFactory\Options\BannerStyleOptions.cs" />
@@ -686,8 +783,58 @@
     <Compile Include="SlightAdjustSettingsDialog.xaml.cs">
       <DependentUpon>SlightAdjustSettingsDialog.xaml</DependentUpon>
     </Compile>
+    <Compile Include="SyncLab\ObjectFormats\FillFormat.cs" />
+    <Compile Include="SyncLab\ObjectFormats\FontColorFormat.cs" />
+    <Compile Include="SyncLab\ObjectFormats\FontFormat.cs" />
+    <Compile Include="SyncLab\ObjectFormats\FontSizeFormat.cs" />
+    <Compile Include="SyncLab\ObjectFormats\FontStyleFormat.cs" />
+    <Compile Include="SyncLab\ObjectFormats\Format.cs" />
+    <Compile Include="SyncLab\ObjectFormats\LineArrowFormat.cs" />
+    <Compile Include="SyncLab\ObjectFormats\FillTransparencyFormat.cs" />
+    <Compile Include="SyncLab\ObjectFormats\LineTransparencyFormat.cs" />
+    <Compile Include="SyncLab\ObjectFormats\LineDashTypeFormat.cs" />
+    <Compile Include="SyncLab\ObjectFormats\LineFillFormat.cs" />
+    <Compile Include="SyncLab\ObjectFormats\LineCompoundTypeFormat.cs" />
+    <Compile Include="SyncLab\ObjectFormats\LineWeightFormat.cs" />
+    <Compile Include="SyncLab\ObjectFormats\PositionHeightFormat.cs" />
+    <Compile Include="SyncLab\ObjectFormats\PositionWidthFormat.cs" />
+    <Compile Include="SyncLab\ObjectFormats\PositionXFormat.cs" />
+    <Compile Include="SyncLab\ObjectFormats\PositionYFormat.cs" />
+    <Compile Include="SyncLab\SyncFormatConstants.cs" />
+    <Compile Include="SyncLab\SyncFormatUtil.cs" />
+    <Compile Include="SyncLab\SyncLabShapeStorage.cs" />
+    <Compile Include="SyncLab\View\FormatTreeNode.cs" />
+    <Compile Include="SyncLab\View\SyncFormatDialog.xaml.cs">
+      <DependentUpon>SyncFormatDialog.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="SyncLab\View\SyncFormatDialogItem.cs" />
+    <Compile Include="SyncLab\View\SyncFormatPaneItem.xaml.cs">
+      <DependentUpon>SyncFormatPaneItem.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="SyncLab\View\SyncFormatListItem.xaml.cs">
+      <DependentUpon>SyncFormatListItem.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="SyncLab\View\SyncPane.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="SyncLab\View\SyncPane.Designer.cs">
+      <DependentUpon>SyncPane.cs</DependentUpon>
+    </Compile>
+    <Compile Include="SyncLab\View\SyncPaneWPF.xaml.cs">
+      <DependentUpon>SyncPaneWPF.xaml</DependentUpon>
+    </Compile>
     <Compile Include="TagMatchers\NoEffectTagMatcher.cs" />
     <Compile Include="Tags\NoEffectTag.cs" />
+    <Compile Include="TimerLab\TimerLabConstants.cs" />
+    <Compile Include="TimerLab\TimerLabPaneWPF.xaml.cs">
+      <DependentUpon>TimerLabPaneWPF.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="TimerLab\TimerPane.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="TimerLab\TimerPane.Designer.cs">
+      <DependentUpon>TimerPane.cs</DependentUpon>
+    </Compile>
     <Compile Include="Utils\Assumption.cs" />
     <Compile Include="Utils\CultureUtil.cs" />
     <Compile Include="Utils\Exceptions\AssumptionFailedException.cs" />
@@ -913,6 +1060,12 @@
     <EmbeddedResource Include="EffectsLab\View\EffectsLabBlurrinessDialogBox.resx">
       <DependentUpon>EffectsLabBlurrinessDialogBox.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="TimerLab\TimerPane.resx">
+      <DependentUpon>TimerPane.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="SyncLab\View\SyncPane.resx">
+      <DependentUpon>SyncPane.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Views\LoadingDialog.resx">
       <DependentUpon>LoadingDialog.cs</DependentUpon>
     </EmbeddedResource>
@@ -1029,9 +1182,6 @@
     <None Include="Resources\Feedback.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\CutOutShape.png" />
-  </ItemGroup>
-  <ItemGroup>
     <None Include="Resources\Bullets.png" />
   </ItemGroup>
   <ItemGroup>
@@ -1108,9 +1258,6 @@
     <None Include="Resources\FitToHeight.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\CutOutShapeMenu.png" />
-  </ItemGroup>
-  <ItemGroup>
     <None Include="Resources\Magnify.png" />
   </ItemGroup>
   <ItemGroup>
@@ -1168,6 +1315,14 @@
     <None Include="Resources\AgendaVisual.png" />
   </ItemGroup>
   <ItemGroup>
+    <Page Include="CropLab\CropLabSettingsDialog.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="CropLab\CustomAspectRatioDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="ColorPicker\Magnifier.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -1239,6 +1394,26 @@
     <Page Include="SlightAdjustSettingsDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="SyncLab\View\SyncFormatPaneItem.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="TimerLab\TimerLabPaneWPF.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="SyncLab\View\SyncFormatDialog.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="SyncLab\View\SyncFormatListItem.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="SyncLab\View\SyncPaneWPF.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
   </ItemGroup>
   <ItemGroup>
@@ -1506,7 +1681,62 @@
     <Resource Include="Resources\PositionsLab\RadialShapeOrientationFixedIcon.png" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Resources\CropToAspectRatio.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\CropToSlide.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\CropToSame.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\CropLab.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\CutOutShape.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\CropOutPadding.png" />
+  </ItemGroup>
+  <ItemGroup>
     <None Include="Resources\RemoveHighlighting.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\SyncLabCopyButton.png" />
+    <None Include="Resources\SyncLabDeleteButton.png" />
+    <None Include="Resources\SyncLabEditButton.png" />
+    <None Include="Resources\SyncLabPasteButton.png" />
+    <Resource Include="Resources\TimerLab.png" />
+    <Resource Include="Resources\TimerLab\HalfHeight.png" />
+    <Resource Include="Resources\TimerLab\HalfWidth.png" />
+    <Resource Include="Resources\TimerLab\MaxHeight.png" />
+    <Resource Include="Resources\TimerLab\MaxWidth.png" />
+    <Resource Include="Resources\TimerLab\MinHeight.png" />
+    <Resource Include="Resources\TimerLab\MinWidth.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\SyncLab.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\MoreLabs.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\CaptionLabSmall.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\HighlightLabSmall.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\NarrationsLabSmall.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\ZoomLabSmall.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\HelpSmall.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\AnimationLabSmall.png" />
   </ItemGroup>
   <!-- Include the build rules for a C# project. -->
   <PropertyGroup>
