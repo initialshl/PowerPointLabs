@@ -1,9 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using TestInterface;
+
 using Microsoft.Office.Interop.PowerPoint;
+
 using PowerPointLabs.ActionFramework.Common.Extension;
+using PowerPointLabs.ShapesLab;
+using PowerPointLabs.TextCollection;
+
+using TestInterface;
 
 namespace PowerPointLabs.FunctionalTestInterface.Impl.Controller
 {
@@ -20,21 +25,21 @@ namespace PowerPointLabs.FunctionalTestInterface.Impl.Controller
 
         public void OpenPane()
         {
-            UIThreadExecutor.Execute(() =>
+            UIThreadExecutor.Execute((Action)(() =>
             {
-                FunctionalTestExtensions.GetRibbonUi().CustomShapeButtonClick(
-                    new RibbonControl("ShapesLab"));
+                FunctionalTestExtensions.GetRibbonUi().OnAction(
+                    new RibbonControl(ShapesLabText.PaneTag));
                 _pane = FunctionalTestExtensions.GetTaskPane(
                     typeof(CustomShapePane)).Control as CustomShapePane;
-            });
+            }));
         }
 
         public void SaveSelectedShapes()
         {
             UIThreadExecutor.Execute(() =>
             {
-                FunctionalTestExtensions.GetRibbonUi().AddShapeButtonClick(
-                    new RibbonControl("AddShapeToShapesLab"));
+                FunctionalTestExtensions.GetRibbonUi().OnAction(
+                    new RibbonControl("AddShape"));
             });
         }
 

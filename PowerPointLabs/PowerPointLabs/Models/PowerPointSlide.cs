@@ -1,17 +1,22 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
-using System.Linq;
 using System.IO;
+using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
+
 using Microsoft.Office.Core;
 using Microsoft.Office.Interop.PowerPoint;
+
+using PowerPointLabs.NarrationsLab;
+using PowerPointLabs.TextCollection;
 using PowerPointLabs.Utils;
-using Shape = Microsoft.Office.Interop.PowerPoint.Shape;
-using Shapes = Microsoft.Office.Interop.PowerPoint.Shapes;
-using ShapeRange = Microsoft.Office.Interop.PowerPoint.ShapeRange;
+
 using Office = Microsoft.Office.Core;
+using Shape = Microsoft.Office.Interop.PowerPoint.Shape;
+using ShapeRange = Microsoft.Office.Interop.PowerPoint.ShapeRange;
+using Shapes = Microsoft.Office.Interop.PowerPoint.Shapes;
 
 namespace PowerPointLabs.Models
 {
@@ -19,10 +24,11 @@ namespace PowerPointLabs.Models
     {
 #pragma warning disable 0618
         public const string PptLabsIndicatorShapeName = "PPTIndicator";
-        private const string PptLabsTemplateMarkerShapeName = "PPTTemplateMarker";
-        private const string UnnamedShapeName = "Unnamed Shape ";
 
         protected readonly Slide _slide;
+
+        private const string PptLabsTemplateMarkerShapeName = "PPTTemplateMarker";
+        private const string UnnamedShapeName = "Unnamed Shape ";
 
         private List<MsoAnimEffect> entryEffects = new List<MsoAnimEffect>()
         {
@@ -59,11 +65,17 @@ namespace PowerPointLabs.Models
 
             PowerPointSlide powerPointSlide;
             if (slide.Name.Contains("PPTLabsSpotlight"))
+            {
                 powerPointSlide = PowerPointSpotlightSlide.FromSlideFactory(slide);
+            }
             else if (PowerPointAckSlide.IsAckSlide(slide))
+            {
                 powerPointSlide = PowerPointAckSlide.FromSlideFactory(slide);
+            }
             else
+            {
                 powerPointSlide = new PowerPointSlide(slide);
+            }
 
             if (includeIndicator)
             {
@@ -111,14 +123,18 @@ namespace PowerPointLabs.Models
         /// </summary>
         public void StoreDataInNotes(string data)
         {
-            NotesPageText = TextCollection.NotesPageStorageText + data;
+            NotesPageText = CommonText.NotesPageStorageText + data;
         }
 
         public string RetrieveDataFromNotes()
         {
             var text = NotesPageText;
-            if (!text.StartsWith(TextCollection.NotesPageStorageText)) return "";
-            return text.Substring(TextCollection.NotesPageStorageText.Length);
+            if (!text.StartsWith(CommonText.NotesPageStorageText))
+            {
+                return "";
+            }
+
+            return text.Substring(CommonText.NotesPageStorageText.Length);
         }
 
         public Shapes Shapes
@@ -218,10 +234,10 @@ namespace PowerPointLabs.Models
             return FromSlideFactory(duplicatedSlide);
         }
 
-        public bool HasAnimationForClick(int click)
+        public bool HasAnimationForClick(int clickNumber)
         {
             var mainSequence = _slide.TimeLine.MainSequence;
-            var effect = mainSequence.FindFirstAnimationForClick(click);
+            var effect = mainSequence.FindFirstAnimationForClick(clickNumber);
 
             return effect != null;
         }
@@ -396,17 +412,6 @@ namespace PowerPointLabs.Models
             return slidePicture;
         }
 
-        private Effect InsertAnimationBeforeExisting(Shape shape, Effect existing, MsoAnimEffect effect)
-        {
-            var sequence = _slide.TimeLine.MainSequence;
-
-            Effect newAnimation = sequence.AddEffect(shape, effect, MsoAnimateByLevel.msoAnimateLevelNone,
-                MsoAnimTriggerType.msoAnimTriggerWithPrevious);
-            newAnimation.MoveBefore(existing);
-
-            return newAnimation;
-        }
-
         public Effect SetShapeAsClickTriggered(Shape shape, int clickNumber, MsoAnimEffect effect)
         {
             Effect addedEffect;
@@ -466,7 +471,10 @@ namespace PowerPointLabs.Models
             for (int i = 0; i < splitPath.Length; ++i)
             {
                 string token = splitPath[i].Trim();
-                if (token.Length <= 1 && char.IsLetter(token, 0)) continue;
+                if (token.Length <= 1 && char.IsLetter(token, 0))
+                {
+                    continue;
+                }
 
                 float val = float.Parse(token, CultureInfo.InvariantCulture);
                 if (isXCoordinate)
@@ -519,13 +527,19 @@ namespace PowerPointLabs.Models
             return ToShapeRange(shapes).Group();
         }
 
+        public ShapeRange ToShapeRange(Shape shape)
+        {
+            List<Shape> shapeList = new List<Shape> { shape };
+            return ToShapeRange(shapeList);
+        }
+
         public ShapeRange ToShapeRange(IEnumerable<Shape> shapes)
         {
             var shapeList = shapes.ToList();
             var oldNames = shapeList.Select(shape => shape.Name).ToList();
 
             var currentShapeNames = Shapes.Cast<Shape>().Select(shape => shape.Name);
-            var unusedNames = Common.GetUnusedStrings(currentShapeNames, shapeList.Count);
+            var unusedNames = CommonUtil.GetUnusedStrings(currentShapeNames, shapeList.Count);
             shapeList.Zip(unusedNames, (shape, name) => shape.Name = name).ToList();
 
 
@@ -545,8 +559,15 @@ namespace PowerPointLabs.Models
             {
                 shape.Copy();
                 var newShape = _slide.Shapes.Paste()[1];
+
+                newShape.Name = shape.Name;
                 newShape.Left = shape.Left;
                 newShape.Top = shape.Top;
+                ShapeUtil.MoveZToJustInFront(newShape, shape);
+
+                DeleteShapeAnimations(newShape);
+                TransferAnimation(shape, newShape);
+
                 return newShape;
             }
             catch (COMException)
@@ -554,6 +575,28 @@ namespace PowerPointLabs.Models
                 // invalid shape for copy paste (e.g. a placeholder title box with no content)
                 return null;
             }
+        }
+
+        /// <summary>
+        /// Clones the specified shape onto the slide, leaving the range unmodified.
+        /// </summary>
+        public ShapeRange CloneShapeFromRange(ShapeRange range, Shape shapeToClone)
+        {
+            Shape clonedShape = this.CopyShapeToSlide(shapeToClone);
+
+            List<Shape> result = new List<Shape>();
+            foreach (Shape shape in range)
+            {
+                if (shape == shapeToClone)
+                {
+                    result.Add(clonedShape);
+                }
+                else
+                {
+                    result.Add(shape);
+                }
+            }
+            return this.ToShapeRange(result);
         }
 
         /// <summary>
@@ -609,7 +652,7 @@ namespace PowerPointLabs.Models
                 InsertAnimationAtIndex(destination, entryDetails.Index, entryDetails.EffectType, entryDetails.Timing.TriggerType);
             }
 
-            Effect exitDetails = enumerableSequence.Last(effect => effect.Shape.Equals(source));
+            Effect exitDetails = enumerableSequence.LastOrDefault(effect => effect.Shape.Equals(source));
             if (exitDetails != null && !exitDetails.Equals(entryDetails))
             {
                 InsertAnimationAtIndex(destination, exitDetails.Index, exitDetails.EffectType,
@@ -634,8 +677,12 @@ namespace PowerPointLabs.Models
             for (int x = sequence.Count; x >= 1; x--)
             {
                 Effect effect = sequence[x];
-                if (effect.Shape.Name == sh.Name && effect.Shape.Id == sh.Id)
+                
+                if (effect.Shape == null || 
+                    (effect.Shape.Name == sh.Name && effect.Shape.Id == sh.Id))
+                {
                     effect.Delete();
+                }
             }
         }
 
@@ -780,8 +827,12 @@ namespace PowerPointLabs.Models
             {
                 Effect effect = sequence[x];
                 if (effect.Shape.Name == shape.Name && effect.Shape.Id == shape.Id)
+                {
                     if (effect.Exit == Office.MsoTriState.msoTrue)
+                    {
                         return true;
+                    }
+                }
             }
             return false;
         }
@@ -793,18 +844,14 @@ namespace PowerPointLabs.Models
             {
                 Effect effect = sequence[x];
                 if (effect.Shape.Name == shape.Name && effect.Shape.Id == shape.Id)
+                {
                     if (IsEntryEffect(effect))
+                    {
                         return true;
+                    }
+                }
             }
             return false;
-        }
-
-        /// <summary>
-        /// TODO: What does "Entry Animation" mean? entryEffects.Contains(effectType) could mean that it is either an entry or exit animation. Perhaps change it to entryEffects.Contains(effectType) && entryEffects.Exit == Mso False
-        /// </summary>
-        private bool IsEntryEffect(Effect effect)
-        {
-            return effect.Exit == MsoTriState.msoFalse && entryEffects.Contains(effect.EffectType);
         }
 
         /// <summary>
@@ -817,7 +864,9 @@ namespace PowerPointLabs.Models
             {
                 Effect effect = sequence[i];
                 if (effect.Shape.Name == shape.Name && effect.Shape.Id == shape.Id)
+                {
                     return i;
+                }
             }
             return -1;
         }
@@ -827,30 +876,12 @@ namespace PowerPointLabs.Models
             _slide.Shapes.Placeholders.Cast<Shape>().ToList().ForEach(shape => shape.Delete());
         }
 
-        protected void DeleteSlideNotes()
-        {
-            if (_slide.HasNotesPage == MsoTriState.msoTrue)
-            {
-                foreach (Shape sh in _slide.NotesPage.Shapes)
-                {
-                    if (sh.TextFrame.HasText == MsoTriState.msoTrue)
-                        sh.TextEffect.Text = "";
-                }
-            }
-        }
-
-        protected void DeleteSlideMedia()
-        {
-            foreach (Shape sh in _slide.Shapes)
-            {
-                if (sh.Type == MsoShapeType.msoMedia)
-                    sh.Delete();
-            }
-        }
-
         public Shape AddTemplateSlideMarker()
         {
-            if (HasTemplateSlideMarker()) return null;
+            if (HasTemplateSlideMarker())
+            {
+                return null;
+            }
 
             float ratio = 22.5f;
             float slideWidth = PowerPointPresentation.Current.SlideWidth;
@@ -862,7 +893,7 @@ namespace PowerPointLabs.Models
 
             markerShape.TextEffect.Alignment = MsoTextEffectAlignment.msoTextEffectAlignmentCentered;
 
-            markerShape.TextFrame2.TextRange.Text = TextCollection.AgendaLabTemplateSlideInstructions;
+            markerShape.TextFrame2.TextRange.Text = AgendaLabText.TemplateSlideInstructions;
             markerShape.Fill.ForeColor.RGB = 0x0000C0;
             markerShape.TextFrame2.TextRange.Font.Bold = MsoTriState.msoTrue;
             markerShape.TextFrame2.TextRange.Font.Fill.ForeColor.RGB = 0x00FFFF;
@@ -876,7 +907,7 @@ namespace PowerPointLabs.Models
             markerShape.Top = slideHeight - markerShape.Height;
             markerShape.Name = PptLabsTemplateMarkerShapeName;
 
-            Utils.Graphics.MakeShapeViewTimeInvisible(markerShape, _slide);
+            ShapeUtil.MakeShapeViewTimeInvisible(markerShape, _slide);
             return markerShape;
         }
 
@@ -893,23 +924,6 @@ namespace PowerPointLabs.Models
         public static bool IsNotTemplateSlideMarker(Shape shape)
         {
             return !IsTemplateSlideMarker(shape);
-        }
-
-        protected Shape AddPowerPointLabsIndicator()
-        {
-            String tempFileName = Path.GetTempFileName();
-            Properties.Resources.Indicator.Save(tempFileName);
-            Shape indicatorShape = _slide.Shapes.AddPicture(tempFileName, Office.MsoTriState.msoFalse, Office.MsoTriState.msoTrue, PowerPointPresentation.Current.SlideWidth - 120, 0, 120, 84);
-
-            indicatorShape.Left = PowerPointPresentation.Current.SlideWidth - 120;
-            indicatorShape.Top = 0;
-            indicatorShape.Width = 120;
-            indicatorShape.Height = 84;
-            indicatorShape.Name = PptLabsIndicatorShapeName + DateTime.Now.ToString("yyyyMMddHHmmssffff");
-
-            Utils.Graphics.MakeShapeViewTimeInvisible(indicatorShape, _slide);
-
-            return indicatorShape;
         }
 
         public void DeleteIndicator()
@@ -950,11 +964,6 @@ namespace PowerPointLabs.Models
             return shape.Name.StartsWith(PptLabsIndicatorShapeName);
         }
 
-        protected void RemoveSlideTransitions()
-        {
-            _slide.SlideShowTransition.EntryEffect = PpEntryEffect.ppEffectNone;
-        }
-
         public void MoveMotionAnimation()
         {
             Sequence sequence = _slide.TimeLine.MainSequence;
@@ -968,7 +977,10 @@ namespace PowerPointLabs.Models
                         Shape sh = eff.Shape;
                         string motionPath = motion.MotionEffect.Path.Trim();
                         if (motionPath.Last() < 'A' || motionPath.Last() > 'Z')
+                        {
                             motionPath += " X";
+                        }
+
                         string[] path = motionPath.Split(' ');
                         int count = path.Length;
                         float xVal = Convert.ToSingle(path[count - 3]);
@@ -999,11 +1011,15 @@ namespace PowerPointLabs.Models
                 if (shapeToMatch.Id == sh.Id && HaveSameNames(shapeToMatch, sh))
                 {
                     if (tempMatchingShape == null)
+                    {
                         tempMatchingShape = sh;
+                    }
                     else
                     {
                         if (GetDistanceBetweenShapes(shapeToMatch, sh) < GetDistanceBetweenShapes(shapeToMatch, tempMatchingShape))
+                        {
                             tempMatchingShape = sh;
+                        }
                     }
                 }
             }
@@ -1018,11 +1034,15 @@ namespace PowerPointLabs.Models
                 if (HaveSameNames(shapeToMatch, sh))
                 {
                     if (tempMatchingShape == null)
+                    {
                         tempMatchingShape = sh;
+                    }
                     else
                     {
                         if (GetDistanceBetweenShapes(shapeToMatch, sh) < GetDistanceBetweenShapes(shapeToMatch, tempMatchingShape))
+                        {
                             tempMatchingShape = sh;
+                        }
                     }
                 }
             }
@@ -1136,6 +1156,107 @@ namespace PowerPointLabs.Models
             return addedEffect;
         }
 
+        /// <summary>
+        /// Default shapes have the property where if you duplicate them (or copy/paste), they change names.
+        /// This command renames the shapes in the slide so that they don't have the default names.
+        /// </summary>
+        public void MakeShapeNamesNonDefault()
+        {
+            var shapes = _slide.Shapes.Cast<Shape>();
+            foreach (var shape in shapes)
+            {
+                if (ShapeUtil.HasDefaultName(shape))
+                {
+                    shape.Name = UnnamedShapeName + CommonUtil.UniqueDigitString();
+                }
+            }
+        }
+
+        /// <summary>
+        /// Gives all shapes in the slide unique names. Good to call before sync logic.
+        /// Note: If the name of the shape is used to identify the shape (e.g. through AgendaShape),
+        /// this can be dangerous if there are duplicates as it overrides the original name.
+        /// </summary>
+        public void MakeShapeNamesUnique(Func<Shape, bool> restrictTo = null)
+        {
+            if (restrictTo == null)
+            {
+                restrictTo = shape => true;
+            }
+
+            var currentNames = new HashSet<string>();
+            var shapes = _slide.Shapes.Cast<Shape>().Where(restrictTo);
+
+            foreach (var shape in shapes)
+            {
+                if (currentNames.Contains(shape.Name))
+                {
+                    shape.Name = UnnamedShapeName + CommonUtil.UniqueDigitString();
+                }
+                currentNames.Add(shape.Name);
+            }
+        }
+
+        public void DeleteSlideNumberShapes()
+        {
+            List<Shape> shapes = _slide.Shapes.Cast<Shape>().ToList();
+
+            var matchingShapes = shapes.Where(current => current.Type == MsoShapeType.msoPlaceholder && current.PlaceholderFormat.Type == PpPlaceholderType.ppPlaceholderSlideNumber);
+
+            foreach (Shape s in matchingShapes)
+            {
+                s.Delete();
+            }
+        }
+
+
+        protected Shape AddPowerPointLabsIndicator()
+        {
+            String tempFileName = Path.GetTempFileName();
+            Properties.Resources.Indicator.Save(tempFileName);
+            Shape indicatorShape = _slide.Shapes.AddPicture(tempFileName, Office.MsoTriState.msoFalse, Office.MsoTriState.msoTrue, PowerPointPresentation.Current.SlideWidth - 120, 0, 120, 84);
+
+            indicatorShape.Left = PowerPointPresentation.Current.SlideWidth - 120;
+            indicatorShape.Top = 0;
+            indicatorShape.Width = 120;
+            indicatorShape.Height = 84;
+            indicatorShape.Name = PptLabsIndicatorShapeName + DateTime.Now.ToString("yyyyMMddHHmmssffff");
+
+            ShapeUtil.MakeShapeViewTimeInvisible(indicatorShape, _slide);
+
+            return indicatorShape;
+        }
+
+        protected void DeleteSlideNotes()
+        {
+            if (_slide.HasNotesPage == MsoTriState.msoTrue)
+            {
+                foreach (Shape sh in _slide.NotesPage.Shapes)
+                {
+                    if (sh.TextFrame.HasText == MsoTriState.msoTrue)
+                    {
+                        sh.TextEffect.Text = "";
+                    }
+                }
+            }
+        }
+
+        protected void DeleteSlideMedia()
+        {
+            foreach (Shape sh in _slide.Shapes)
+            {
+                if (sh.Type == MsoShapeType.msoMedia)
+                {
+                    sh.Delete();
+                }
+            }
+        }
+
+        protected void RemoveSlideTransitions()
+        {
+            _slide.SlideShowTransition.EntryEffect = PpEntryEffect.ppEffectNone;
+        }
+
         private Effect InsertAnimationAtIndex(Shape shape, int index, MsoAnimEffect animationEffect,
             MsoAnimTriggerType triggerType)
         {
@@ -1180,7 +1301,7 @@ namespace PowerPointLabs.Models
         private static void DeleteEffectsForShape(Shape shape, IEnumerable<Effect> mainEffects)
         {
             var shapeToDeleteList = mainEffects.Where(e => e.Shape.Equals(shape)).ToList();
-            
+
             foreach (Effect e in shapeToDeleteList)
             {
                 e.Delete();
@@ -1205,54 +1326,23 @@ namespace PowerPointLabs.Models
             return (name1.ToUpper().CompareTo(name2.ToUpper()) == 0);
         }
 
-        /// <summary>
-        /// Default shapes have the property where if you duplicate them (or copy/paste), they change names.
-        /// This command renames the shapes in the slide so that they don't have the default names.
-        /// </summary>
-        public void MakeShapeNamesNonDefault()
+        private Effect InsertAnimationBeforeExisting(Shape shape, Effect existing, MsoAnimEffect effect)
         {
-            var shapes = _slide.Shapes.Cast<Shape>();
-            foreach (var shape in shapes)
-            {
-                if (Graphics.HasDefaultName(shape))
-                {
-                    shape.Name = UnnamedShapeName + Common.UniqueDigitString();
-                }
-            }
+            var sequence = _slide.TimeLine.MainSequence;
+
+            Effect newAnimation = sequence.AddEffect(shape, effect, MsoAnimateByLevel.msoAnimateLevelNone,
+                MsoAnimTriggerType.msoAnimTriggerWithPrevious);
+            newAnimation.MoveBefore(existing);
+
+            return newAnimation;
         }
 
         /// <summary>
-        /// Gives all shapes in the slide unique names. Good to call before sync logic.
-        /// Note: If the name of the shape is used to identify the shape (e.g. through AgendaShape),
-        /// this can be dangerous if there are duplicates as it overrides the original name.
+        /// TODO: What does "Entry Animation" mean? entryEffects.Contains(effectType) could mean that it is either an entry or exit animation. Perhaps change it to entryEffects.Contains(effectType) && entryEffects.Exit == Mso False
         /// </summary>
-        public void MakeShapeNamesUnique(Func<Shape, bool> restrictTo = null)
+        private bool IsEntryEffect(Effect effect)
         {
-            if (restrictTo == null) restrictTo = shape => true;
-
-            var currentNames = new HashSet<string>();
-            var shapes = _slide.Shapes.Cast<Shape>().Where(restrictTo);
-
-            foreach (var shape in shapes)
-            {
-                if (currentNames.Contains(shape.Name))
-                {
-                    shape.Name = UnnamedShapeName + Common.UniqueDigitString();
-                }
-                currentNames.Add(shape.Name);
-            }
-        }
-
-        public void DeleteSlideNumberShapes()
-        {
-            List<Shape> shapes = _slide.Shapes.Cast<Shape>().ToList();
-
-            var matchingShapes = shapes.Where(current => current.Type == MsoShapeType.msoPlaceholder && current.PlaceholderFormat.Type == PpPlaceholderType.ppPlaceholderSlideNumber);
-
-            foreach (Shape s in matchingShapes)
-            {
-                s.Delete();
-            }
+            return effect.Exit == MsoTriState.msoFalse && entryEffects.Contains(effect.EffectType);
         }
     }
 }

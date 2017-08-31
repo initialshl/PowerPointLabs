@@ -1,7 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+
+using PowerPointLabs.AnimationLab;
+
 using Office = Microsoft.Office.Core;
 using PowerPoint = Microsoft.Office.Interop.PowerPoint;
 
@@ -17,7 +17,9 @@ namespace PowerPointLabs.Models
         public static PowerPointSlide FromSlideFactory(PowerPoint.Slide slide)
         {
             if (slide == null)
+            {
                 return null;
+            }
 
             return new PowerPointStepBackSlide(slide);
         }

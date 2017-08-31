@@ -5,7 +5,7 @@ namespace PowerPointLabs.ActionFramework.Common.Interface
     /// <summary>
     /// Handler that handles GetSupertip call
     /// </summary>
-    public abstract class SupertipHandler
+    public abstract class SupertipHandler : BaseHandler
     {
         public string Get(string ribbonId)
         {
@@ -16,7 +16,7 @@ namespace PowerPointLabs.ActionFramework.Common.Interface
             catch (Exception e)
             {
                 Log.Logger.LogException(e, ribbonId);
-                Views.ErrorDialogWrapper.ShowDialog("PowerPointLabs", e.Message, e);
+                Views.ErrorDialogBox.ShowDialog("PowerPointLabs", e.Message, e);
                 return "";
             }
         }

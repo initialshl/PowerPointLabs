@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+
+using PowerPointLabs.AnimationLab;
+
 using Office = Microsoft.Office.Core;
 using PowerPoint = Microsoft.Office.Interop.PowerPoint;
 
@@ -20,7 +23,9 @@ namespace PowerPointLabs.Models
         public static PowerPointSlide FromSlideFactory(PowerPoint.Slide slide)
         {
             if (slide == null)
+            {
                 return null;
+            }
 
             return new PowerPointMagnifiedPanSlide(slide);
         }
@@ -40,7 +45,9 @@ namespace PowerPointLabs.Models
             List<PowerPoint.Shape> shapes = _slide.Shapes.Cast<PowerPoint.Shape>().ToList();
             var matchingShapes = shapes.Where(current => (!current.Name.Contains("PPTLabsMagnifyAreaGroup")));
             foreach (PowerPoint.Shape s in matchingShapes)
+            {
                 s.Delete();
+            }
 
             panShapeFrom = GetShapesWithPrefix("PPTLabsMagnifyAreaGroup")[0];
             panShapeTo = slideToPanTo.GetShapesWithPrefix("PPTLabsMagnifyAreaGroup")[0];

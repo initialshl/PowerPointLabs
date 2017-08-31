@@ -5,7 +5,7 @@ namespace PowerPointLabs.ActionFramework.Common.Interface
     /// <summary>
     /// Handler that handles OnCheckBoxAction call
     /// </summary>
-    public abstract class CheckBoxActionHandler : BaseActionHandler
+    public abstract class CheckBoxActionHandler : BaseHandler
     {
         public void Execute(string ribbonId, bool pressed)
         {
@@ -16,7 +16,7 @@ namespace PowerPointLabs.ActionFramework.Common.Interface
             catch (Exception e)
             {
                 Log.Logger.LogException(e, ribbonId);
-                Views.ErrorDialogWrapper.ShowDialog("PowerPointLabs", e.Message, e);
+                Views.ErrorDialogBox.ShowDialog("PowerPointLabs", e.Message, e);
             }
         }
 

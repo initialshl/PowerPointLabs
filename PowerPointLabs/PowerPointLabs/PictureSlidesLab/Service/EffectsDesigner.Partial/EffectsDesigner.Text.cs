@@ -1,11 +1,14 @@
 ﻿using System;
 using System.Globalization;
+
 using Microsoft.Office.Core;
+
 using PowerPointLabs.ActionFramework.Common.Log;
 using PowerPointLabs.PictureSlidesLab.Service.Effect;
-using PowerPointLabs.PictureSlidesLab.Util;
 using PowerPointLabs.Utils;
+
 using PowerPoint = Microsoft.Office.Interop.PowerPoint;
+using ShapeUtil = PowerPointLabs.PictureSlidesLab.Util.ShapeUtil;
 
 namespace PowerPointLabs.PictureSlidesLab.Service
 {
@@ -16,7 +19,9 @@ namespace PowerPointLabs.PictureSlidesLab.Service
         {
             var shape = ShapeUtil.GetTextShapeToProcess(Shapes);
             if (shape == null)
+            {
                 return;
+            }
 
             // a hack to enable the textbox layout
             shape.Width = shape.Width;
@@ -28,7 +33,7 @@ namespace PowerPointLabs.PictureSlidesLab.Service
 
             if (!string.IsNullOrEmpty(fontColor))
             {
-                font.Fill.ForeColor.RGB = Graphics.ConvertColorToRgb(StringUtil.GetColorFromHexValue(fontColor));
+                font.Fill.ForeColor.RGB = GraphicsUtil.ConvertColorToRgb(StringUtil.GetColorFromHexValue(fontColor));
             }
 
             if (!StringUtil.IsEmpty(fontFamily))
@@ -57,20 +62,22 @@ namespace PowerPointLabs.PictureSlidesLab.Service
         {
             var shape = ShapeUtil.GetTextShapeToProcess(Shapes);
             if (shape == null)
+            {
                 return;
+            }
 
             if (isUseTextGlow)
             {
                 shape.TextFrame2.TextRange.Font.Glow.Radius = 8;
                 shape.TextFrame2.TextRange.Font.Glow.Color.RGB =
-                    Graphics.ConvertColorToRgb(StringUtil.GetColorFromHexValue(textGlowColor));
+                    GraphicsUtil.ConvertColorToRgb(StringUtil.GetColorFromHexValue(textGlowColor));
                 shape.TextFrame2.TextRange.Font.Glow.Transparency = 0.6f;
             }
             else
             {
                 shape.TextFrame2.TextRange.Font.Glow.Radius = 0;
                 shape.TextFrame2.TextRange.Font.Glow.Color.RGB =
-                    Graphics.ConvertColorToRgb(StringUtil.GetColorFromHexValue(textGlowColor));
+                    GraphicsUtil.ConvertColorToRgb(StringUtil.GetColorFromHexValue(textGlowColor));
                 shape.TextFrame2.TextRange.Font.Glow.Transparency = 0.0f;
             }
         }
@@ -89,7 +96,10 @@ namespace PowerPointLabs.PictureSlidesLab.Service
                 Shapes.Range(), SlideWidth, SlideHeight)
                 .IsTextShapesEmpty();
 
-            if (!isTextShapesEmpty) return;
+            if (!isTextShapesEmpty)
+            {
+                return;
+            }
 
             try
             {
@@ -138,7 +148,9 @@ namespace PowerPointLabs.PictureSlidesLab.Service
         {
             if (position == Position.NoEffect
                 || alignment == Alignment.NoEffect)
+            {
                 return;
+            }
 
             new TextBoxes(Shapes.Range(), SlideWidth, SlideHeight)
                 .RecoverTextWrapping();

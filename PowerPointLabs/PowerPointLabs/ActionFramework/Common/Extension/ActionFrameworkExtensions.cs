@@ -49,6 +49,11 @@ namespace PowerPointLabs.ActionFramework.Common.Extension
             return Globals.ThisAddIn.Ribbon;
         }
 
+        public static ThisAddIn GetAddIn()
+        {
+            return Globals.ThisAddIn;
+        }
+
         /// <summary>
         /// Go to a slide
         /// </summary>
@@ -99,7 +104,7 @@ namespace PowerPointLabs.ActionFramework.Common.Extension
             catch (Exception e)
             {
                 Log.Logger.LogException(e, "RegisterTaskPane_Extension");
-                Views.ErrorDialogWrapper.ShowDialog("PowerPointLabs", e.Message, e);
+                Views.ErrorDialogBox.ShowDialog("PowerPointLabs", e.Message, e);
                 return null;
             }
         }

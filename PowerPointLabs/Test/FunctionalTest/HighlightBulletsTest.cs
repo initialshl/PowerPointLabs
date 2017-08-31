@@ -8,7 +8,7 @@ namespace Test.FunctionalTest
     {
         protected override string GetTestingSlideName()
         {
-            return "HighlightPoints.pptx";
+            return "HighlightLab\\HighlightPoints.pptx";
         }
 
         [TestMethod]
@@ -16,12 +16,22 @@ namespace Test.FunctionalTest
         public void FT_HighlightBulletsTest()
         {
             // Do tests in reverse order because added slides change slide numbers lower down.
+            TestHighlightPoints_SelectEndOfText();
             TestHighlightBackground_SelectText();
             TestHighlightBackground_SelectTextBoxes();
             TestHighlightBackground_SelectSlide();
             TestHighlightPoints_SelectText();
             TestHighlightPoints_SelectTextBoxes();
             TestHighlightPoints_SelectSlide();
+        }
+
+        private void TestHighlightPoints_SelectEndOfText()
+        {
+            PpOperations.SelectSlide(22);
+            PpOperations.SelectTextInShape("First Textbox", 414, 414);
+            PplFeatures.HighlightPoints();
+
+            AssertIsSame(22, 23);
         }
 
         private void TestHighlightBackground_SelectText()

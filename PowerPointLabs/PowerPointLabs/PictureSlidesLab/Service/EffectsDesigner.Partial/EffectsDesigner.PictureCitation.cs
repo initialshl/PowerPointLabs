@@ -12,7 +12,10 @@ namespace PowerPointLabs.PictureSlidesLab.Service
 
         public void ApplyImageReferenceToSlideNote(string source)
         {
-            if (StringUtil.IsEmpty(source)) return;
+            if (StringUtil.IsEmpty(source))
+            {
+                return;
+            }
 
             RemoveImageReference();
             NotesPageText = "[[Picture taken from " + source + " on " + DateTime.Now + "]]\n" +
@@ -29,11 +32,11 @@ namespace PowerPointLabs.PictureSlidesLab.Service
             if (!StringUtil.IsEmpty(textBoxColor))
             {
                 imageRefShape.Fill.BackColor.RGB
-                    = Graphics.ConvertColorToRgb(StringUtil.GetColorFromHexValue(textBoxColor));
+                    = GraphicsUtil.ConvertColorToRgb(StringUtil.GetColorFromHexValue(textBoxColor));
                 imageRefShape.Fill.Transparency = 0.2f;
             }
             imageRefShape.TextFrame2.TextRange.TrimText().Font.Fill.ForeColor.RGB
-                = Graphics.ConvertColorToRgb(StringUtil.GetColorFromHexValue(fontColor));
+                = GraphicsUtil.ConvertColorToRgb(StringUtil.GetColorFromHexValue(fontColor));
             imageRefShape.TextEffect.FontName = StringUtil.IsEmpty(fontFamily) ? "Tahoma" : fontFamily;
             imageRefShape.TextEffect.FontSize = fontSize;
             imageRefShape.TextEffect.Alignment = AlignmentToMsoTextEffectAlignment(citationTextAlignment);

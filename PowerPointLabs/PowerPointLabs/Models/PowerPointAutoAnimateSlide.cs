@@ -1,7 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
+
+using PowerPointLabs.AnimationLab;
+
 using Office = Microsoft.Office.Core;
 using PowerPoint = Microsoft.Office.Interop.PowerPoint;
 
@@ -17,7 +18,9 @@ namespace PowerPointLabs.Models
         public static PowerPointSlide FromSlideFactory(PowerPoint.Slide slide)
         {
             if (slide == null)
+            {
                 return null;
+            }
 
             return new PowerPointAutoAnimateSlide(slide);
         }
@@ -40,7 +43,15 @@ namespace PowerPointLabs.Models
         private void AnimateMatchingShapes(PowerPoint.Shape[] currentSlideShapes, PowerPoint.Shape[] nextSlideSlideShapes, int[] matchingShapeIDs)
         {
             int matchingShapeIndex;
-            foreach (PowerPoint.Shape sh in _slide.Shapes)
+
+            // Copy the shapes as the list may be modified when iterating
+            PowerPoint.Shape[] slideShapesCopy = new PowerPoint.Shape[_slide.Shapes.Count];
+            for (int i = 0; i < slideShapesCopy.Length; i++)
+            {
+                slideShapesCopy[i] = _slide.Shapes[i + 1];
+            }
+
+            foreach (PowerPoint.Shape sh in slideShapesCopy)
             {
                 if (matchingShapeIDs.Contains(sh.Id))
                 {
@@ -52,10 +63,12 @@ namespace PowerPointLabs.Models
                         if (NeedsFrameAnimation(sh, nextSlideSlideShapes[matchingShapeIndex]))
                         {
                             FrameMotionAnimation.animationType = FrameMotionAnimation.FrameMotionAnimationType.kAutoAnimate;
-                            FrameMotionAnimation.AddFrameMotionAnimation(this, sh, nextSlideSlideShapes[matchingShapeIndex], AutoAnimate.defaultDuration);
+                            FrameMotionAnimation.AddFrameMotionAnimation(this, sh, nextSlideSlideShapes[matchingShapeIndex], AnimationLabSettings.AnimationDuration);
                         }
                         else
-                            DefaultMotionAnimation.AddDefaultMotionAnimation(this, sh, nextSlideSlideShapes[matchingShapeIndex], AutoAnimate.defaultDuration, trigger);
+                        {
+                            DefaultMotionAnimation.AddDefaultMotionAnimation(this, sh, nextSlideSlideShapes[matchingShapeIndex], AnimationLabSettings.AnimationDuration, trigger);
+                        }
                     }
                 }
             }
@@ -73,8 +86,7 @@ namespace PowerPointLabs.Models
                         DeleteShapeAnimations(sh);
                         PowerPoint.Effect effectFade = _slide.TimeLine.MainSequence.AddEffect(sh, PowerPoint.MsoAnimEffect.msoAnimEffectFade, PowerPoint.MsoAnimateByLevel.msoAnimateLevelNone, PowerPoint.MsoAnimTriggerType.msoAnimTriggerWithPrevious);
                         effectFade.Exit = Office.MsoTriState.msoTrue;
-                        effectFade.Timing.Duration = AutoAnimate.defaultDuration;
-                        //fadeFlag = true;
+                        effectFade.Timing.Duration = AnimationLabSettings.AnimationDuration;
                     }
                     else
                     {
@@ -93,15 +105,18 @@ namespace PowerPointLabs.Models
             float finalFont = 0.0f;
             float initialFont = 0.0f;
 
-            if (shape1.HasTextFrame == Office.MsoTriState.msoTrue && (shape1.TextFrame.HasText == Office.MsoTriState.msoTriStateMixed || shape1.TextFrame.HasText == Office.MsoTriState.msoTrue) && shape1.TextFrame.TextRange.Font.Size != shape2.TextFrame.TextRange.Font.Size)
+            if (shape1.HasTextFrame == Office.MsoTriState.msoTrue && 
+                (shape1.TextFrame.HasText == Office.MsoTriState.msoTriStateMixed || shape1.TextFrame.HasText == Office.MsoTriState.msoTrue) && 
+                shape1.TextFrame.TextRange.Font.Size != shape2.TextFrame.TextRange.Font.Size)
             {
                 finalFont = shape2.TextFrame.TextRange.Font.Size;
                 initialFont = shape1.TextFrame.TextRange.Font.Size;
             }
 
-            if ((AutoAnimate.frameAnimationChecked && (shape2.Height != shape1.Height || shape2.Width != shape1.Width))
-                || ((shape2.Rotation != shape1.Rotation || shape1.Rotation % 90 != 0) && (shape2.Height != shape1.Height || shape2.Width != shape1.Width))
-                || finalFont != initialFont)
+            if ((AnimationLabSettings.IsUseFrameAnimation && (shape2.Height != shape1.Height || shape2.Width != shape1.Width)) || 
+                ((shape2.Rotation != shape1.Rotation || shape1.Rotation % 90 != 0) && (shape2.Height != shape1.Height || shape2.Width != shape1.Width)) || 
+                (!Utils.ShapeUtil.IsStraightLine(shape1) && (shape1.HorizontalFlip != shape2.HorizontalFlip || shape1.VerticalFlip != shape2.VerticalFlip)) || 
+                finalFont != initialFont)
             {
                 return true;
             }

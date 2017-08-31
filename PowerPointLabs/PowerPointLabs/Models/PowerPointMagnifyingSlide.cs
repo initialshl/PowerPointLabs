@@ -1,7 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
+
+using PowerPointLabs.AnimationLab;
+using PowerPointLabs.CropLab;
+using PowerPointLabs.ZoomLab;
+
 using Office = Microsoft.Office.Core;
 using PowerPoint = Microsoft.Office.Interop.PowerPoint;
 
@@ -22,7 +26,9 @@ namespace PowerPointLabs.Models
         public static PowerPointSlide FromSlideFactory(PowerPoint.Slide slide)
         {
             if (slide == null)
+            {
                 return null;
+            }
 
             return new PowerPointMagnifyingSlide(slide);
         }
@@ -31,7 +37,7 @@ namespace PowerPointLabs.Models
         {
             PrepareForZoomToArea(zoomShape);
             PowerPoint.Shape shapeToZoom = null, referenceShape = null;
-            if (!ZoomToArea.backgroundZoomChecked)
+            if (!ZoomLabSettings.BackgroundZoomChecked)
             {
                 shapeToZoom = GetShapeToZoom(zoomShape);
                 referenceShape = GetReferenceShape(shapeToZoom);
@@ -45,7 +51,7 @@ namespace PowerPointLabs.Models
 
                 referenceShape = GetReferenceShape(zoomShape);
                 DefaultMotionAnimation.AddZoomToAreaMotionAnimation(this, shapeToZoom, zoomShape, referenceShape, 0.5f, PowerPoint.MsoAnimTriggerType.msoAnimTriggerAfterPrevious);
-            } 
+            }
 
             shapeToZoom.Name = "PPTLabsMagnifyAreaSlide" + DateTime.Now.ToString("yyyyMMddHHmmssffff");
             referenceShape.Delete();
@@ -61,9 +67,12 @@ namespace PowerPointLabs.Models
             List<PowerPoint.Shape> shapes = _slide.Shapes.Cast<PowerPoint.Shape>().ToList();
             var matchingShapes = shapes.Where(current => (HasExitAnimation(current) || current.Equals(zoomShape)));
             foreach (PowerPoint.Shape s in matchingShapes)
+            {
                 s.Delete();
+            }
 
-            AddZoomSlideCroppedPicture();
+            float magnifyRatio = PowerPointPresentation.Current.SlideWidth / zoomShape.Width;
+            AddZoomSlideCroppedPicture(magnifyRatio);
 
             DeleteSlideNotes();
             DeleteSlideMedia();
@@ -76,14 +85,16 @@ namespace PowerPointLabs.Models
             foreach (PowerPoint.Shape s in matchingShapes)
             {
                 DeleteShapeAnimations(s);
-                if (!ZoomToArea.backgroundZoomChecked)
+                if (!ZoomLabSettings.BackgroundZoomChecked)
                 {
                     PowerPoint.Effect effectFade = _slide.TimeLine.MainSequence.AddEffect(s, PowerPoint.MsoAnimEffect.msoAnimEffectFade, PowerPoint.MsoAnimateByLevel.msoAnimateLevelNone, PowerPoint.MsoAnimTriggerType.msoAnimTriggerWithPrevious);
                     effectFade.Exit = Office.MsoTriState.msoTrue;
                     effectFade.Timing.Duration = 0.25f;
                 }
                 else
+                {
                     s.Visible = Office.MsoTriState.msoFalse;
+                }
             }
         }
 
@@ -95,9 +106,13 @@ namespace PowerPointLabs.Models
             PowerPoint.Shape referenceShape = _slide.Shapes.Paste()[1];
             referenceShape.LockAspectRatio = Office.MsoTriState.msoTrue;
             if (referenceShape.Width > referenceShape.Height)
+            {
                 referenceShape.Width = PowerPointPresentation.Current.SlideWidth;
+            }
             else
+            {
                 referenceShape.Height = PowerPointPresentation.Current.SlideHeight;
+            }
 
             referenceShape.Left = (PowerPointPresentation.Current.SlideWidth / 2) - (referenceShape.Width / 2);
             referenceShape.Top = (PowerPointPresentation.Current.SlideHeight / 2) - (referenceShape.Height / 2);
@@ -122,7 +137,7 @@ namespace PowerPointLabs.Models
         }
 
         //Stores slide-size crop of the current slide as a global variable
-        private void AddZoomSlideCroppedPicture()
+        private void AddZoomSlideCroppedPicture(float magnifyRatio = 1.0f)
         {
             PowerPointSlide zoomSlideCopy = this.Duplicate();
             Globals.ThisAddIn.Application.ActiveWindow.View.GotoSlide(zoomSlideCopy.Index);
@@ -130,12 +145,12 @@ namespace PowerPointLabs.Models
             PowerPoint.Shape cropShape = zoomSlideCopy.Shapes.AddShape(Office.MsoAutoShapeType.msoShapeRectangle, 0, 0, PowerPointPresentation.Current.SlideWidth - 0.01f, PowerPointPresentation.Current.SlideHeight - 0.01f);
             cropShape.Select();
             PowerPoint.Selection sel = Globals.ThisAddIn.Application.ActiveWindow.Selection;
-            PowerPoint.Shape croppedShape = CropToShape.Crop(sel);
+            PowerPoint.Shape croppedShape = CropToShape.Crop(zoomSlideCopy, sel, magnifyRatio: magnifyRatio);
             croppedShape.Cut();
 
             zoomSlideCroppedShapes = _slide.Shapes.PasteSpecial(PowerPoint.PpPasteDataType.ppPastePNG)[1];
             zoomSlideCroppedShapes.Name = "PPTLabsMagnifyAreaGroup" + DateTime.Now.ToString("yyyyMMddHHmmssffff");
-            Utils.Graphics.FitShapeToSlide(ref zoomSlideCroppedShapes);
+            Utils.ShapeUtil.FitShapeToSlide(ref zoomSlideCroppedShapes);
             zoomSlideCopy.Delete();
         }
 

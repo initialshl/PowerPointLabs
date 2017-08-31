@@ -6,7 +6,7 @@ namespace PowerPointLabs.ActionFramework.Common.Interface
     /// <summary>
     /// Handler that handles GetImage call
     /// </summary>
-    public abstract class ImageHandler
+    public abstract class ImageHandler : BaseHandler
     {
         public Bitmap Get(string ribbonId)
         {
@@ -17,7 +17,7 @@ namespace PowerPointLabs.ActionFramework.Common.Interface
             catch (Exception e)
             {
                 Log.Logger.LogException(e, ribbonId);
-                Views.ErrorDialogWrapper.ShowDialog("PowerPointLabs", e.Message, e);
+                Views.ErrorDialogBox.ShowDialog("PowerPointLabs", e.Message, e);
                 return null;
             }
         }

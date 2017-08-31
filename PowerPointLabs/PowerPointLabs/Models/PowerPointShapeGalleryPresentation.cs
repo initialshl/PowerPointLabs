@@ -4,10 +4,13 @@ using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
-using Microsoft.Office.Core;
+
 using Microsoft.Office.Interop.PowerPoint;
+
+using PowerPointLabs.TextCollection;
 using PowerPointLabs.Utils;
-using Shape = Microsoft.Office.Interop.PowerPoint.Shape;
+
+using Office = Microsoft.Office.Core;
 
 namespace PowerPointLabs.Models
 {
@@ -98,7 +101,7 @@ namespace PowerPointLabs.Models
             }
             else
             {
-                categoryNameBox = newSlide.Shapes.AddTextbox(MsoTextOrientation.msoTextOrientationHorizontal, 0, 0,
+                categoryNameBox = newSlide.Shapes.AddTextbox(Office.MsoTextOrientation.msoTextOrientationHorizontal, 0, 0,
                                                              SlideWidth, 0);
                 categoryNameBox.TextFrame.TextRange.Text = string.Format(CategoryNameFormat, name);
             }
@@ -115,11 +118,11 @@ namespace PowerPointLabs.Models
             ActionProtection();
         }
 
-        public string AddShape(Selection selection, string name, string category = "", bool fromClipBoard = false)
+        public string AddShape(ShapeRange shapeRange, string name, string category = "", bool fromClipBoard = false)
         {
             if (!fromClipBoard)
             {
-                selection.ShapeRange.Copy();
+                shapeRange.Copy();
             }
 
             var categorySlide = _defaultCategory;
@@ -128,7 +131,10 @@ namespace PowerPointLabs.Models
             {
                 var categoryIndex = FindCategoryIndex(category);
 
-                if (categoryIndex == -1) return string.Empty;
+                if (categoryIndex == -1)
+                {
+                    return string.Empty;
+                }
 
                 categorySlide = Slides[categoryIndex - 1];
             }
@@ -145,7 +151,7 @@ namespace PowerPointLabs.Models
                                             .Distinct()
                                             .ToList();
 
-                name = Common.NextAvailableName(nameList, name);
+                name = CommonUtil.NextAvailableName(nameList, name);
             }
 
             var pastedShapeRange = categorySlide.Shapes.Paste();
@@ -212,7 +218,10 @@ namespace PowerPointLabs.Models
         {
             var index = FindCategoryIndex(categoryName);
 
-            if (index == -1) return;
+            if (index == -1)
+            {
+                return;
+            }
 
             // copy a shape with name from default category to another category
             var shapes = _defaultCategory.GetShapesWithRule(GenereateNameSearchPattern(name));
@@ -234,7 +243,10 @@ namespace PowerPointLabs.Models
         {
             var index = FindCategoryIndex(categoryName);
 
-            if (index == -1) return;
+            if (index == -1)
+            {
+                return;
+            }
 
             // move a shape with name from default category to another category
             var shapes = _defaultCategory.GetShapesWithRule(GenereateNameSearchPattern(name));
@@ -258,7 +270,10 @@ namespace PowerPointLabs.Models
                 return false;
             }
 
-            if (!ConsistencyCheck()) return false;
+            if (!ConsistencyCheck())
+            {
+                return false;
+            }
 
             // set default category to be the first slide, but do nothing if the presentation
             // has no slide, i.e. it's a newly created presentation
@@ -357,7 +372,7 @@ namespace PowerPointLabs.Models
                 // for case 1 & 2, we need to add a new text box into the slie.
                 // For case 1, the text of category box should be slide.Name;
                 // For case 2, the text of category box should be next untitled name;
-                categoryNameBox = category.Shapes.AddTextbox(MsoTextOrientation.msoTextOrientationHorizontal, 0, 0,
+                categoryNameBox = category.Shapes.AddTextbox(Office.MsoTextOrientation.msoTextOrientationHorizontal, 0, 0,
                                                              SlideWidth, 0);
 
                 var defaultSlideNameRegex = new Regex(DefaultSlideNameSearchPattern);
@@ -519,7 +534,7 @@ namespace PowerPointLabs.Models
             foreach (Shape shape in category.Shapes)
             {
                 // skip category name box
-                if (shape.Type == MsoShapeType.msoTextBox &&
+                if (shape.Type == Office.MsoShapeType.msoTextBox &&
                     _categoryNameBoxCollection.Contains(shape))
                 {
                     continue;
@@ -537,7 +552,7 @@ namespace PowerPointLabs.Models
 
                 if (!pngShapes.Contains(shapePath))
                 {
-                    Graphics.ExportShape(shape, shapePath);
+                    GraphicsUtil.ExportShape(shape, shapePath);
                     shapeLost = true;
                 }
             }
@@ -567,7 +582,7 @@ namespace PowerPointLabs.Models
 
         private Regex GenereateNameSearchPattern(string name)
         {
-            var skippedName = Common.SkipRegexCharacter(name);
+            var skippedName = CommonUtil.SkipRegexCharacter(name);
             var searchPattern = string.Format(NameSearchPattern, skippedName, skippedName);
             return new Regex(searchPattern);
         }
@@ -615,7 +630,7 @@ namespace PowerPointLabs.Models
             if ((shapeDuplicate || shapeLost || categoryInShapeGalleryLost || pngLost) &&
                 !IsImportedFile)
             {
-                MessageBox.Show(TextCollection.ShapeCorruptedError);
+                MessageBox.Show(ShapesLabText.ErrorShapeCorrupted);
 
                 return false;
             }
@@ -634,7 +649,7 @@ namespace PowerPointLabs.Models
 
         private Shape RetrieveCategoryNameBox(PowerPointSlide slide)
         {
-            var nameBoxCandidate = slide.GetShapesWithTypeAndRule(MsoShapeType.msoTextBox, new Regex(".+"));
+            var nameBoxCandidate = slide.GetShapesWithTypeAndRule(Office.MsoShapeType.msoTextBox, new Regex(".+"));
 
             if (nameBoxCandidate.Count == 0)
             {

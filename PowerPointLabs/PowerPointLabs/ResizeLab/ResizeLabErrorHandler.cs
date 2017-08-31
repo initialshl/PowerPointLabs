@@ -1,18 +1,20 @@
-﻿namespace PowerPointLabs.ResizeLab
+﻿using PowerPointLabs.TextCollection;
+
+namespace PowerPointLabs.ResizeLab
 {
     internal class ResizeLabErrorHandler
     {
-        private IResizeLabPane View { get; set; }
-        private static ResizeLabErrorHandler _errorHandler;
-
         public const int ErrorCodeInvalidSelection = 0;
         public const int ErrorCodeNotSameShapes = 1;
         public const int ErrorCodeGroupShapeNotSupported = 2;
 
-        private const string ErrorMessageInvalidSelection = TextCollection.ResizeLabText.ErrorInvalidSelection;
-        private const string ErrorMessageNotSameShapes = TextCollection.ResizeLabText.ErrorNotSameShapes;
-        private const string ErrorMessageGroupShapeNotSupported = TextCollection.ResizeLabText.ErrorGroupShapeNotSupported;
-        private const string ErrorMessageUndefined = TextCollection.ResizeLabText.ErrorUndefined;
+        private IResizeLabPane View { get; set; }
+        private static ResizeLabErrorHandler _errorHandler;
+
+        private const string ErrorMessageInvalidSelection = ResizeLabText.ErrorInvalidSelection;
+        private const string ErrorMessageNotSameShapes = ResizeLabText.ErrorNotSameShapes;
+        private const string ErrorMessageGroupShapeNotSupported = ResizeLabText.ErrorGroupShapeNotSupported;
+        private const string ErrorMessageUndefined = ResizeLabText.ErrorUndefined;
 
         private ResizeLabErrorHandler(IResizeLabPane view = null)
         {

@@ -1,19 +1,21 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.IO;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
-using System.Text.RegularExpressions;
 using System.Windows.Forms;
+
 using Microsoft.Office.Core;
 using Microsoft.Office.Interop.PowerPoint;
+
+using PowerPointLabs.AgendaLab.Templates;
 using PowerPointLabs.FunctionalTestInterface.Impl;
 using PowerPointLabs.Models;
+using PowerPointLabs.TextCollection;
 using PowerPointLabs.Utils;
 using PowerPointLabs.Views;
-using Graphics = PowerPointLabs.Utils.Graphics;
+
+using GraphicsUtil = PowerPointLabs.Utils.GraphicsUtil;
 using Shape = Microsoft.Office.Interop.PowerPoint.Shape;
 
 namespace PowerPointLabs.AgendaLab
@@ -24,7 +26,7 @@ namespace PowerPointLabs.AgendaLab
     internal static partial class AgendaLabMain
     {
 #pragma warning disable 0618
-        private static LoadingDialog _loadDialog = new LoadingDialog();
+        private static LoadingDialogBox _loadDialog = new LoadingDialogBox();
 
         private const int SectionNameMaxLength = 180;
 
@@ -105,22 +107,28 @@ namespace PowerPointLabs.AgendaLab
 
                 if (AgendaPresent())
                 {
-                    var confirm = MessageBox.Show(TextCollection.AgendaLabAgendaExistError,
-                                                  TextCollection.AgendaLabAgendaExistErrorCaption,
+                    var confirm = MessageBox.Show(AgendaLabText.ErrorAgendaExist,
+                                                  AgendaLabText.ErrorAgendaExistTitle,
                                                   MessageBoxButtons.OKCancel);
-                    if (confirm != DialogResult.OK) return;
+                    if (confirm != DialogResult.OK)
+                    {
+                        return;
+                    }
 
                     RemoveAllAgendaItems(slideTracker);
                 }
 
-                if (!ValidSections()) return;
+                if (!ValidSections())
+                {
+                    return;
+                }
 
                 // The process should not abort (return) anytime past this point. Changes will start being made past this point.
 
                 slideTracker.DeleteAcknowledgementSlideAndTrack();
 
-                dialogOpen = DisplayLoadingDialog(TextCollection.AgendaLabGeneratingDialogTitle,
-                                                    TextCollection.AgendaLabGeneratingDialogContent);
+                dialogOpen = DisplayLoadingDialog(AgendaLabText.GeneratingDialogTitle,
+                                                    AgendaLabText.GeneratingDialogContent);
                 currentWindow.ViewType = PpViewType.ppViewNormal;
 
                 switch (type)
@@ -160,7 +168,7 @@ namespace PowerPointLabs.AgendaLab
 
                 if (!AgendaPresent())
                 {
-                    ShowErrorMessage(TextCollection.AgendaLabNoAgendaError);
+                    ShowErrorMessage(AgendaLabText.ErrorNoAgenda);
                     return;
                 }
 
@@ -198,8 +206,15 @@ namespace PowerPointLabs.AgendaLab
                     usingNewReferenceSlide = true;
                 }
 
-                if (!ValidAgenda(refSlide, type)) return;
-                if (!ValidSections()) return;
+                if (!ValidAgenda(refSlide, type))
+                {
+                    return;
+                }
+
+                if (!ValidSections())
+                {
+                    return;
+                }
 
                 // The process should not abort (return) anytime past this point. Changes will start being made past this point.
 
@@ -209,11 +224,13 @@ namespace PowerPointLabs.AgendaLab
                 }
 
                 slideTracker.DeleteAcknowledgementSlideAndTrack();
-                dialogOpen = DisplayLoadingDialog(TextCollection.AgendaLabSynchronizingDialogTitle,
-                                                    TextCollection.AgendaLabSynchronizingDialogContent);
+                dialogOpen = DisplayLoadingDialog(AgendaLabText.SynchronizingDialogTitle,
+                                                    AgendaLabText.SynchronizingDialogContent);
                 currentWindow.ViewType = PpViewType.ppViewNormal;
 
                 BringToFront(refSlide);
+                
+                SlideUtil.CopyToDesign("Agenda Template", refSlide);
 
                 switch (type)
                 {
@@ -287,8 +304,8 @@ namespace PowerPointLabs.AgendaLab
             {
                 // If only one slide selected, ask whether the user wants to generate on all slides.
                 var confirmResult = MessageBox.Show(new Form { TopMost = true },
-                                                    TextCollection.AgendaLabBeamGenerateSingleSlideDialogContent,
-                                                    TextCollection.AgendaLabBeamGenerateSingleSlideDialogTitle,
+                                                    AgendaLabText.BeamGenerateSingleSlideDialogContent,
+                                                    AgendaLabText.BeamGenerateSingleSlideDialogTitle,
                                                     MessageBoxButtons.YesNo);
                 if (confirmResult == DialogResult.Yes)
                 {
@@ -317,6 +334,8 @@ namespace PowerPointLabs.AgendaLab
             AgendaSlide.SetAsReferenceSlideName(refSlide, Type.Beam);
             refSlide.AddTemplateSlideMarker();
             refSlide.Hidden = true;
+
+            SlideUtil.CopyToDesign("Agenda Template", refSlide);
 
             return refSlide;
         }
@@ -354,7 +373,7 @@ namespace PowerPointLabs.AgendaLab
 
             var spacing = Math.Max(itemWidth, slideWidth/textBoxes.Count);
             int columnCount = (int) (slideWidth/spacing + 0.01f); // +0.01f to cater to rounding errors.
-            int rowCount = Common.CeilingDivide(textBoxes.Count, columnCount);
+            int rowCount = CommonUtil.CeilingDivide(textBoxes.Count, columnCount);
 
             var left = 0f;
             var leftOffset = (slideWidth - columnCount*spacing)/2;
@@ -384,7 +403,11 @@ namespace PowerPointLabs.AgendaLab
 
         private static void MatchColour(Shape highlightedTextBox, Shape background)
         {
-            if (background == null) return;
+            if (background == null)
+            {
+                return;
+            }
+
             highlightedTextBox.Fill.ForeColor.RGB = background.Fill.ForeColor.RGB;
         }
 
@@ -396,8 +419,8 @@ namespace PowerPointLabs.AgendaLab
             AgendaShape.SetShapeName(textBox, ShapePurpose.BeamShapeHighlightedText, AgendaSection.None);
             textBox.TextFrame.AutoSize = PpAutoSize.ppAutoSizeShapeToFitText;
             textBox.TextFrame.WordWrap = MsoTriState.msoFalse;
-            textBox.TextFrame.TextRange.Text = TextCollection.AgendaLabBeamHighlightedText;
-            textBox.TextFrame.TextRange.Font.Color.RGB = Graphics.ConvertColorToRgb(Color.Yellow);
+            textBox.TextFrame.TextRange.Text = AgendaLabText.BeamHighlightedText;
+            textBox.TextFrame.TextRange.Font.Color.RGB = GraphicsUtil.ConvertColorToRgb(Color.Yellow);
 
             return textBox;
         }
@@ -408,7 +431,7 @@ namespace PowerPointLabs.AgendaLab
 
             AgendaShape.SetShapeName(background, ShapePurpose.BeamShapeBackground, AgendaSection.None);
             background.Line.Visible = MsoTriState.msoFalse;
-            background.Fill.ForeColor.RGB = Graphics.ConvertColorToRgb(Color.Black);
+            background.Fill.ForeColor.RGB = GraphicsUtil.ConvertColorToRgb(Color.Black);
             background.Width = PowerPointPresentation.Current.SlideWidth;
 
             return background;
@@ -422,7 +445,7 @@ namespace PowerPointLabs.AgendaLab
             textBox.TextFrame.AutoSize = PpAutoSize.ppAutoSizeShapeToFitText;
             textBox.TextFrame.WordWrap = MsoTriState.msoFalse;
             textBox.TextFrame.TextRange.Text = section.Name;
-            textBox.TextFrame.TextRange.Font.Color.RGB = Graphics.ConvertColorToRgb(Color.White);
+            textBox.TextFrame.TextRange.Font.Color.RGB = GraphicsUtil.ConvertColorToRgb(Color.White);
 
             return textBox;
         }
@@ -446,19 +469,21 @@ namespace PowerPointLabs.AgendaLab
             var contentShape = refSlide.Shapes.Placeholders[2];
             AgendaShape.SetShapeName(contentShape, ShapePurpose.ContentShape, AgendaSection.None);
 
-            Graphics.SetText(titleShape, TextCollection.AgendaLabTitleContent);
-            Graphics.SetText(contentShape, TextCollection.AgendaLabBulletVisitedContent,
-                                            TextCollection.AgendaLabBulletHighlightedContent,
-                                            TextCollection.AgendaLabBulletUnvisitedContent);
+            ShapeUtil.SetText(titleShape, AgendaLabText.TitleContent);
+            ShapeUtil.SetText(contentShape, AgendaLabText.BulletVisitedContent,
+                                            AgendaLabText.BulletHighlightedContent,
+                                            AgendaLabText.BulletUnvisitedContent);
 
-            var paragraphs = Graphics.GetParagraphs(contentShape);
-            paragraphs[0].Font.Fill.ForeColor.RGB = Graphics.ConvertColorToRgb(Color.Gray);
-            paragraphs[1].Font.Fill.ForeColor.RGB = Graphics.ConvertColorToRgb(Color.Red);
-            paragraphs[2].Font.Fill.ForeColor.RGB = Graphics.ConvertColorToRgb(Color.Black);
+            var paragraphs = ShapeUtil.GetParagraphs(contentShape);
+            paragraphs[0].Font.Fill.ForeColor.RGB = GraphicsUtil.ConvertColorToRgb(Color.Gray);
+            paragraphs[1].Font.Fill.ForeColor.RGB = GraphicsUtil.ConvertColorToRgb(Color.Red);
+            paragraphs[2].Font.Fill.ForeColor.RGB = GraphicsUtil.ConvertColorToRgb(Color.Black);
 
             AgendaSlide.SetAsReferenceSlideName(refSlide, Type.Bullet);
             refSlide.AddTemplateSlideMarker();
             refSlide.Hidden = true;
+
+            SlideUtil.CopyToDesign("Agenda Template", refSlide);
 
             return refSlide;
         }
@@ -476,13 +501,15 @@ namespace PowerPointLabs.AgendaLab
                                                             .Add(1, PpSlideLayout.ppLayoutTitleOnly));
 
             var titleBar = refSlide.Shapes.Placeholders[1];
-            Graphics.SetText(titleBar, TextCollection.AgendaLabTitleContent);
+            ShapeUtil.SetText(titleBar, AgendaLabText.TitleContent);
 
             InsertVisualAgendaSectionImages(refSlide);
 
             AgendaSlide.SetAsReferenceSlideName(refSlide, Type.Visual);
             refSlide.AddTemplateSlideMarker();
             refSlide.Hidden = true;
+
+            SlideUtil.CopyToDesign("Agenda Template", refSlide);
 
             return refSlide;
         }
@@ -513,7 +540,7 @@ namespace PowerPointLabs.AgendaLab
             float canvasLeft = (slideWidth - canvasWidth)/2;
 
             int columnCount = (int) Math.Ceiling(Math.Sqrt(sectionImages.Count));
-            int rowCount = Common.CeilingDivide(sectionImages.Count, columnCount);
+            int rowCount = CommonUtil.CeilingDivide(sectionImages.Count, columnCount);
             float panelWidth = canvasWidth/columnCount;
             float panelHeight = panelWidth/aspectRatio;
 
@@ -560,7 +587,7 @@ namespace PowerPointLabs.AgendaLab
         private static void UpdateSectionImage(PowerPointSlide refSlide, AgendaSection section, Shape previousImageShape)
         {
             var snapshotShape = CreateSectionImage(refSlide, section);
-            Graphics.SyncShape(previousImageShape, snapshotShape, pickupShapeFormat: true, pickupTextContent: false, pickupTextFormat: false);
+            ShapeUtil.SyncShape(previousImageShape, snapshotShape, pickupShapeFormat: true, pickupTextContent: false, pickupTextFormat: false);
             previousImageShape.Delete();
         }
         
@@ -571,7 +598,10 @@ namespace PowerPointLabs.AgendaLab
 
         private static void RemoveAllAgendaItems(SlideSelectionTracker slideTracker = null)
         {
-            if (slideTracker == null) slideTracker = SlideSelectionTracker.CreateInactiveTracker();
+            if (slideTracker == null)
+            {
+                slideTracker = SlideSelectionTracker.CreateInactiveTracker();
+            }
 
             PowerPointPresentation.Current.Slides.Where(AgendaSlide.IsAnyAgendaSlide)
                                                  .ToList()
@@ -734,7 +764,10 @@ namespace PowerPointLabs.AgendaLab
             foreach (var shape in shapes)
             {
                 var agendaShape = AgendaShape.Decode(shape);
-                if (agendaShape == null || agendaShape.ShapePurpose != ShapePurpose.VisualAgendaImage) continue;
+                if (agendaShape == null || agendaShape.ShapePurpose != ShapePurpose.VisualAgendaImage)
+                {
+                    continue;
+                }
 
                 int index = agendaShape.Section.Index;
                 if (shapeAssignment.ContainsKey(index))
@@ -758,10 +791,16 @@ namespace PowerPointLabs.AgendaLab
         /// </summary> 
         private static void PositionNewImageShapes(List<Shape> shapes, float existingImageWidth, float existingImageHeight)
         {
-            if (shapes.Count == 0) return;
+            if (shapes.Count == 0)
+            {
+                return;
+            }
 
             ArrangeInGrid(shapes);
-            if (existingImageWidth <= 0 || existingImageHeight <= 0) return;
+            if (existingImageWidth <= 0 || existingImageHeight <= 0)
+            {
+                return;
+            }
 
             foreach (var shape in shapes)
             {
@@ -823,12 +862,15 @@ namespace PowerPointLabs.AgendaLab
 
             MatchColour(highlightedTextBox, background);
 
-            if (SectionsMatch(currentSections, newSections)) return;
+            if (SectionsMatch(currentSections, newSections))
+            {
+                return;
+            }
 
 
             var confirmResult = MessageBox.Show(new Form() { TopMost = true },
-                                                TextCollection.AgendaLabReorganiseSidebarContent,
-                                                TextCollection.AgendaLabReorganiseSidebarTitle,
+                                                AgendaLabText.ReorganiseSidebarContent,
+                                                AgendaLabText.ReorganiseSidebarTitle,
                                                 MessageBoxButtons.YesNo);
             if (confirmResult == DialogResult.Yes)
             {
@@ -860,7 +902,7 @@ namespace PowerPointLabs.AgendaLab
                 {
                     // Reuse old textbox
                     var textbox = textboxAssignment[index];
-                    Graphics.SetText(textbox, section.Name);
+                    ShapeUtil.SetText(textbox, section.Name);
                     AgendaShape.SetShapeName(textbox, ShapePurpose.BeamShapeText, section);
                     reassignedTextboxIndexes.Add(index);
                 }
@@ -869,7 +911,7 @@ namespace PowerPointLabs.AgendaLab
                     // Create new textbox
                     var textbox = PrepareBeamAgendaBeamItem(refSlide, section);
                     var referenceTextFormat = beamFormats.Regular;
-                    Graphics.SyncTextRange(referenceTextFormat, textbox.TextFrame2.TextRange, pickupTextContent: false);
+                    ShapeUtil.SyncTextRange(referenceTextFormat, textbox.TextFrame2.TextRange, pickupTextContent: false);
                     newTextboxes.Add(textbox);
                 }
             }
@@ -921,9 +963,12 @@ namespace PowerPointLabs.AgendaLab
             for (int i = 0; i < newTextBoxes.Count; ++i)
             {
                 var referenceTextFormat = beamFormats.Regular;
-                if (i < oldTextBoxes.Count) referenceTextFormat = oldTextBoxes[i].TextFrame2.TextRange;
+                if (i < oldTextBoxes.Count)
+                {
+                    referenceTextFormat = oldTextBoxes[i].TextFrame2.TextRange;
+                }
 
-                Graphics.SyncTextRange(referenceTextFormat, newTextBoxes[i].TextFrame2.TextRange, pickupTextContent: false);
+                ShapeUtil.SyncTextRange(referenceTextFormat, newTextBoxes[i].TextFrame2.TextRange, pickupTextContent: false);
             }
 
             oldTextBoxes.ForEach(shape => shape.Delete());
@@ -936,13 +981,22 @@ namespace PowerPointLabs.AgendaLab
 
         private static bool SectionsMatch(List<AgendaSection> currentSections, List<AgendaSection> newSections)
         {
-            if (currentSections == null) return false;
-            if (currentSections.Count != newSections.Count) return false;
+            if (currentSections == null)
+            {
+                return false;
+            }
+            if (currentSections.Count != newSections.Count)
+            {
+                return false;
+            }
             for (int i = 0; i < currentSections.Count; ++i)
             {
                 var currentSection = currentSections[i];
                 var newSection = newSections[i];
-                if (currentSection.Index != newSection.Index || currentSection.Name != newSection.Name) return false;
+                if (currentSection.Index != newSection.Index || currentSection.Name != newSection.Name)
+                {
+                    return false;
+                }
             }
             return true;
         }
@@ -1007,7 +1061,10 @@ namespace PowerPointLabs.AgendaLab
                                 .ToList()
                                 .ForEach(shape => shape.Delete());
 
-            if (section.Index == 1) return;
+            if (section.Index == 1)
+            {
+                return;
+            }
 
             var beamFormats = BeamFormats.ExtractFormats(refBeamShape);
             var currentSectionTextBox = beamShape.GroupItems
@@ -1017,7 +1074,7 @@ namespace PowerPointLabs.AgendaLab
                                                 .FirstOrDefault();
             var currentSectionText = currentSectionTextBox.TextFrame2.TextRange;
 
-            Graphics.SyncTextRange(beamFormats.Highlighted, currentSectionText, pickupTextContent: false);
+            ShapeUtil.SyncTextRange(beamFormats.Highlighted, currentSectionText, pickupTextContent: false);
         }
         #endregion
 
@@ -1058,16 +1115,15 @@ namespace PowerPointLabs.AgendaLab
             }
             else
             {
-                _loadDialog = new LoadingDialog(title, content);
+                _loadDialog = new LoadingDialogBox(title, content);
                 _loadDialog.Show();
-                _loadDialog.Refresh();
                 return true;
             }
         }
 
         private static void DisposeLoadingDialog()
         {
-            _loadDialog.Dispose();
+            _loadDialog.Close();
         }
 
         #endregion
@@ -1081,25 +1137,25 @@ namespace PowerPointLabs.AgendaLab
 
             if (sections.Count == 0)
             {
-                ShowErrorMessage(TextCollection.AgendaLabNoSectionError);
+                ShowErrorMessage(AgendaLabText.ErrorNoSection);
                 return false;
             }
 
             if (sections.Count == 1)
             {
-                ShowErrorMessage(TextCollection.AgendaLabSingleSectionError);
+                ShowErrorMessage(AgendaLabText.ErrorSingleSection);
                 return false;
             }
 
             if (HasEmptySection())
             {
-                ShowErrorMessage(TextCollection.AgendaLabEmptySectionError);
+                ShowErrorMessage(AgendaLabText.ErrorEmptySection);
                 return false;
             }
 
             if (HasTooLongSectionName())
             {
-                ShowErrorMessage(TextCollection.AgendaLabSectionNameTooLongError);
+                ShowErrorMessage(AgendaLabText.ErrorSectionNameTooLong);
                 return false;
             }
 
@@ -1139,19 +1195,19 @@ namespace PowerPointLabs.AgendaLab
         {
             if (!AgendaPresent())
             {
-                ShowErrorMessage(TextCollection.AgendaLabNoAgendaError);
+                ShowErrorMessage(AgendaLabText.ErrorNoAgenda);
                 return false;
             }
 
             if (refSlide == null)
             {
-                ShowErrorMessage(TextCollection.AgendaLabNoReferenceSlideError);
+                ShowErrorMessage(AgendaLabText.ErrorNoReferenceSlide);
                 return false;
             }
 
             if (InvalidReferenceSlide(type, refSlide))
             {
-                ShowErrorMessage(TextCollection.AgendaLabInvalidReferenceSlideError);
+                ShowErrorMessage(AgendaLabText.ErrorInvalidReferenceSlide);
                 return false;
             }
 
@@ -1181,13 +1237,23 @@ namespace PowerPointLabs.AgendaLab
         private static bool InvalidBeamAgendaReferenceSlide(PowerPointSlide refSlide)
         {
             var beamShape = FindBeamShape(refSlide);
-            if (beamShape == null) return true;
+
+            if (beamShape == null)
+            {
+                return true;
+            }
+
             try
             {
                 if (BeamFormats.GetShapeWithPurpose(beamShape, ShapePurpose.BeamShapeHighlightedText) == null)
+                {
                     return true;
+                }
+
                 if (BeamFormats.GetShapeWithPurpose(beamShape, ShapePurpose.BeamShapeText) == null)
+                {
                     return true;
+                }
             }
             catch (COMException)
             {
@@ -1207,7 +1273,7 @@ namespace PowerPointLabs.AgendaLab
 
         private static void ShowErrorMessage(string message)
         {
-            MessageBox.Show(message, TextCollection.AgendaLabErrorDialogTitle);
+            MessageBox.Show(message, AgendaLabText.ErrorDialogTitle);
         }
 
         private static string CreateInDocHyperLink(PowerPointSlide slide)

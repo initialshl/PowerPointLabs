@@ -1,5 +1,8 @@
 ﻿using System.Drawing;
 using System.Windows.Forms;
+
+using PowerPointLabs.ShapesLab;
+
 using PPExtraEventHelper;
 
 namespace PowerPointLabs.Views
@@ -26,27 +29,6 @@ namespace PowerPointLabs.Views
             ReleaseHandle();
         }
 
-        private void CustomPaint()
-        {
-            _bufferGraphics.Clear(_parentTextBox.BackColor);
-            var labeledThumbnail = _parentTextBox.Parent.Parent as LabeledThumbnail;
-
-            if (labeledThumbnail == null)
-            {
-                return;
-            }
-
-            TextRenderer.DrawText(_bufferGraphics, labeledThumbnail.NameLable, _parentTextBox.Font,
-            _parentTextBox.ClientRectangle, _parentTextBox.ForeColor, _parentTextBox.BackColor,
-            TextFormatFlags.TextBoxControl |
-            TextFormatFlags.VerticalCenter |
-            TextFormatFlags.Left |
-            TextFormatFlags.WordBreak |
-            TextFormatFlags.EndEllipsis);
-
-            _textBoxGraphics.DrawImageUnscaled(_bitmap, 0, 0);
-        }
-
         protected override void WndProc(ref Message m)
         {
             switch (m.Msg)
@@ -62,6 +44,27 @@ namespace PowerPointLabs.Views
                     base.WndProc(ref m);
                     break;
             }
+        }
+
+        private void CustomPaint()
+        {
+            _bufferGraphics.Clear(_parentTextBox.BackColor);
+            var labeledThumbnail = _parentTextBox.Parent.Parent as LabeledThumbnail;
+
+            if (labeledThumbnail == null)
+            {
+                return;
+            }
+
+            TextRenderer.DrawText(_bufferGraphics, labeledThumbnail.NameLabel, _parentTextBox.Font,
+            _parentTextBox.ClientRectangle, _parentTextBox.ForeColor, _parentTextBox.BackColor,
+            TextFormatFlags.TextBoxControl |
+            TextFormatFlags.VerticalCenter |
+            TextFormatFlags.Left |
+            TextFormatFlags.WordBreak |
+            TextFormatFlags.EndEllipsis);
+
+            _textBoxGraphics.DrawImageUnscaled(_bitmap, 0, 0);
         }
     }
 }

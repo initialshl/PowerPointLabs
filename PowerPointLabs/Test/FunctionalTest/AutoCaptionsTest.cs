@@ -1,4 +1,7 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+
+using PowerPointLabs.TextCollection;
+
 using Test.Util;
 
 namespace Test.FunctionalTest
@@ -8,7 +11,7 @@ namespace Test.FunctionalTest
     {
         protected override string GetTestingSlideName()
         {
-            return "AutoCaptions.pptx";
+            return "CaptionsLab\\AutoCaptions.pptx";
         }
 
         [TestMethod]
@@ -25,6 +28,19 @@ namespace Test.FunctionalTest
 
             SlideUtil.IsSameAnimations(expSlide, actualSlide);
             SlideUtil.IsSameLooking(expSlide, actualSlide);
+        }
+
+        [TestMethod]
+        [TestCategory("FT")]
+        public void FT_CaptionsMessageOneEmptySlide()
+        {
+            var actualSlide = PpOperations.SelectSlide(6);
+            ThreadUtil.WaitFor(1000);
+
+            MessageBoxUtil.ExpectMessageBoxWillPopUp(
+                CaptionsLabText.ErrorDialogTitle,
+                "Captions could not be created because there are no notes entered. Please enter something in the notes and try again.",
+                PplFeatures.AutoCaptions);
         }
     }
 }

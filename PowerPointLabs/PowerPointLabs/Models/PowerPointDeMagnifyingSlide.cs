@@ -1,5 +1,9 @@
 ﻿using System;
 using System.Linq;
+
+using PowerPointLabs.AnimationLab;
+using PowerPointLabs.ZoomLab;
+
 using Office = Microsoft.Office.Core;
 using PowerPoint = Microsoft.Office.Interop.PowerPoint;
 
@@ -18,7 +22,9 @@ namespace PowerPointLabs.Models
         public static PowerPointSlide FromSlideFactory(PowerPoint.Slide slide)
         {
             if (slide == null)
+            {
                 return null;
+            }
 
             return new PowerPointDeMagnifyingSlide(slide);
         }
@@ -27,14 +33,18 @@ namespace PowerPointLabs.Models
         {
             PrepareForZoomToArea(zoomShape);
             
-            if (!ZoomToArea.backgroundZoomChecked)
+            if (!ZoomLabSettings.BackgroundZoomChecked)
             {
                 //Zoom stored shape to fit slide
                 zoomSlideCroppedShapes.LockAspectRatio = Office.MsoTriState.msoTrue;
                 if (zoomSlideCroppedShapes.Width > zoomSlideCroppedShapes.Height)
+                {
                     zoomSlideCroppedShapes.Width = PowerPointPresentation.Current.SlideWidth;
+                }
                 else
+                {
                     zoomSlideCroppedShapes.Height = PowerPointPresentation.Current.SlideHeight;
+                }
 
                 zoomSlideCroppedShapes.Left = (PowerPointPresentation.Current.SlideWidth / 2) - (zoomSlideCroppedShapes.Width / 2);
                 zoomSlideCroppedShapes.Top = (PowerPointPresentation.Current.SlideHeight / 2) - (zoomSlideCroppedShapes.Height / 2);
@@ -49,9 +59,13 @@ namespace PowerPointLabs.Models
                     if (!(tmp.Equals(zoomSlideCroppedShapes) || tmp.Equals(indicatorShape)))
                     {
                         if (isFirst)
+                        {
                             effectFade = _slide.TimeLine.MainSequence.AddEffect(tmp, PowerPoint.MsoAnimEffect.msoAnimEffectFade, PowerPoint.MsoAnimateByLevel.msoAnimateLevelNone, PowerPoint.MsoAnimTriggerType.msoAnimTriggerAfterPrevious);
+                        }
                         else
+                        {
                             effectFade = _slide.TimeLine.MainSequence.AddEffect(tmp, PowerPoint.MsoAnimEffect.msoAnimEffectFade, PowerPoint.MsoAnimateByLevel.msoAnimateLevelNone, PowerPoint.MsoAnimTriggerType.msoAnimTriggerWithPrevious);
+                        }
 
                         effectFade.Timing.Duration = 0.25f;
                         isFirst = false;
@@ -79,9 +93,13 @@ namespace PowerPointLabs.Models
                     {
                         tmp.Visible = Office.MsoTriState.msoTrue;
                         if (isFirst)
+                        {
                             effectFade = _slide.TimeLine.MainSequence.AddEffect(tmp, PowerPoint.MsoAnimEffect.msoAnimEffectAppear, PowerPoint.MsoAnimateByLevel.msoAnimateLevelNone, PowerPoint.MsoAnimTriggerType.msoAnimTriggerAfterPrevious);
+                        }
                         else
+                        {
                             effectFade = _slide.TimeLine.MainSequence.AddEffect(tmp, PowerPoint.MsoAnimEffect.msoAnimEffectAppear, PowerPoint.MsoAnimateByLevel.msoAnimateLevelNone, PowerPoint.MsoAnimTriggerType.msoAnimTriggerWithPrevious);
+                        }
 
                         effectFade.Timing.Duration = 0.01f;
                         isFirst = false;
@@ -148,9 +166,13 @@ namespace PowerPointLabs.Models
             PowerPoint.Shape referenceShape = _slide.Shapes.Paste()[1];
             referenceShape.LockAspectRatio = Office.MsoTriState.msoTrue;
             if (referenceShape.Width > referenceShape.Height)
+            {
                 referenceShape.Width = PowerPointPresentation.Current.SlideWidth;
+            }
             else
+            {
                 referenceShape.Height = PowerPointPresentation.Current.SlideHeight;
+            }
 
             referenceShape.Left = (PowerPointPresentation.Current.SlideWidth / 2) - (referenceShape.Width / 2);
             referenceShape.Top = (PowerPointPresentation.Current.SlideHeight / 2) - (referenceShape.Height / 2);
@@ -165,7 +187,7 @@ namespace PowerPointLabs.Models
             zoomSlideCroppedShapes.Visible = Office.MsoTriState.msoTrue;
             DeleteShapeAnimations(zoomSlideCroppedShapes);
 
-            if (!ZoomToArea.backgroundZoomChecked)
+            if (!ZoomLabSettings.BackgroundZoomChecked)
             {
                 zoomSlideCroppedShapes.PictureFormat.CropLeft += zoomShape.Left;
                 zoomSlideCroppedShapes.PictureFormat.CropTop += zoomShape.Top;

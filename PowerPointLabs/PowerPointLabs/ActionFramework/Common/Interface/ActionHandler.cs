@@ -5,7 +5,7 @@ namespace PowerPointLabs.ActionFramework.Common.Interface
     /// <summary>
     /// Handler that handles OnAction call
     /// </summary>
-    public abstract class ActionHandler : BaseActionHandler
+    public abstract class ActionHandler : BaseHandler
     {
         public void Execute(string ribbonId)
         {
@@ -16,7 +16,7 @@ namespace PowerPointLabs.ActionFramework.Common.Interface
             catch (Exception e)
             {
                 Log.Logger.LogException(e, ribbonId);
-                Views.ErrorDialogWrapper.ShowDialog("PowerPointLabs", e.Message, e);
+                Views.ErrorDialogBox.ShowDialog("PowerPointLabs", e.Message, e);
             }
         }
 

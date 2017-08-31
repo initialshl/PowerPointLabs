@@ -1,7 +1,10 @@
 ﻿using System;
 using System.Drawing;
 using System.Windows.Forms;
+
 using PowerPointLabs.ActionFramework.Common.Extension;
+using PowerPointLabs.TextCollection;
+
 using TestInterface;
 
 namespace PowerPointLabs.FunctionalTestInterface.Impl.Controller
@@ -19,13 +22,13 @@ namespace PowerPointLabs.FunctionalTestInterface.Impl.Controller
 
         public void OpenPane()
         {
-            UIThreadExecutor.Execute(() =>
+            UIThreadExecutor.Execute((Action)(() =>
             {
                 FunctionalTestExtensions.GetRibbonUi().OnAction(
-                    new RibbonControl("ColorsLabButton"));
+                    new RibbonControl(ColorsLabText.PaneTag));
                 _pane = FunctionalTestExtensions.GetTaskPane(
                     typeof(ColorPane)).Control as ColorPane;
-            });
+            }));
         }
 
         public Panel GetDropletPanel()
@@ -37,7 +40,7 @@ namespace PowerPointLabs.FunctionalTestInterface.Impl.Controller
             return null;
         }
 
-        public Button GetFontColorButton()
+        public Panel GetFontColorButton()
         {
             if (_pane != null)
             {
@@ -46,7 +49,7 @@ namespace PowerPointLabs.FunctionalTestInterface.Impl.Controller
             return null;
         }
 
-        public Button GetLineColorButton()
+        public Panel GetLineColorButton()
         {
             if (_pane != null)
             {
@@ -55,11 +58,11 @@ namespace PowerPointLabs.FunctionalTestInterface.Impl.Controller
             return null;
         }
 
-        public Button GetFillCollorButton()
+        public Panel GetFillColorButton()
         {
             if (_pane != null)
             {
-                return _pane.GetFillCollorButton();
+                return _pane.GetFillColorButton();
             }
             return null;
         }

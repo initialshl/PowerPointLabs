@@ -1,7 +1,11 @@
 ﻿using System.Windows.Media;
+
 using Microsoft.Office.Interop.PowerPoint;
-using Color = System.Drawing.Color;
+
+using PowerPointLabs.TextCollection;
 using PowerPointLabs.Utils;
+
+using Color = System.Drawing.Color;
 
 namespace PowerPointLabs.PictureSlidesLab.ViewModel
 {
@@ -16,13 +20,16 @@ namespace PowerPointLabs.PictureSlidesLab.ViewModel
         #region Binding funcs for color panel
         public void BindStyleToColorPanel()
         {
-            if (!IsAbleToBindProperty()) return;
+            if (!IsAbleToBindProperty())
+            {
+                return;
+            }
 
             var styleOption = _styleOptions[StylesVariationListSelectedId.Number];
             var currentCategory = CurrentVariantCategory.Text;
             var bc = new BrushConverter();
 
-            if (currentCategory.Contains(TextCollection.PictureSlidesLabText.ColorHasEffect))
+            if (currentCategory.Contains(PictureSlidesLabText.ColorHasEffect))
             {
                 var propName = GetPropertyName(currentCategory);
                 var type = styleOption.GetType();
@@ -65,7 +72,10 @@ namespace PowerPointLabs.PictureSlidesLab.ViewModel
         #region Binding funcs for font panel
         public void BindStyleToFontPanel()
         {
-            if (!IsAbleToBindProperty()) return;
+            if (!IsAbleToBindProperty())
+            {
+                return;
+            }
 
             var styleOption = _styleOptions[StylesVariationListSelectedId.Number];
             var styleFontFamily = styleOption.GetFontFamily();
@@ -98,7 +108,10 @@ namespace PowerPointLabs.PictureSlidesLab.ViewModel
         #region Binding funcs for slider
         public void BindStyleToSlider()
         {
-            if (!IsAbleToBindProperty()) return;
+            if (!IsAbleToBindProperty())
+            {
+                return;
+            }
 
             var styleOption = _styleOptions[StylesVariationListSelectedId.Number];
             var currentCategory = CurrentVariantCategory.Text;
@@ -141,13 +154,16 @@ namespace PowerPointLabs.PictureSlidesLab.ViewModel
 
         private void BindColorToStyle(Color color)
         {
-            if (!IsAbleToBindProperty()) return;
+            if (!IsAbleToBindProperty())
+            {
+                return;
+            }
 
             var styleOption = _styleOptions[StylesVariationListSelectedId.Number];
             var currentCategory = CurrentVariantCategory.Text;
             var targetColor = StringUtil.GetHexValue(color);
 
-            if (currentCategory.Contains(TextCollection.PictureSlidesLabText.ColorHasEffect))
+            if (currentCategory.Contains(PictureSlidesLabText.ColorHasEffect))
             {
                 styleOption.OptionName = "Customized";
                 var propName = GetPropertyName(currentCategory);
@@ -159,12 +175,15 @@ namespace PowerPointLabs.PictureSlidesLab.ViewModel
 
         private void BindColorToVariant(Color color)
         {
-            if (!IsAbleToBindProperty()) return;
+            if (!IsAbleToBindProperty())
+            {
+                return;
+            }
 
             var currentCategory = CurrentVariantCategory.Text;
             var styleVariant = _styleVariants[currentCategory][StylesVariationListSelectedId.Number];
 
-            if (currentCategory.Contains(TextCollection.PictureSlidesLabText.ColorHasEffect))
+            if (currentCategory.Contains(PictureSlidesLabText.ColorHasEffect))
             {
                 styleVariant.Set("OptionName", "Customized");
                 styleVariant.Set(GetPropertyName(currentCategory), StringUtil.GetHexValue(color));
@@ -173,12 +192,15 @@ namespace PowerPointLabs.PictureSlidesLab.ViewModel
 
         private void BindFontToStyle(string font)
         {
-            if (!IsAbleToBindProperty()) return;
+            if (!IsAbleToBindProperty())
+            {
+                return;
+            }
 
             var styleOption = _styleOptions[StylesVariationListSelectedId.Number];
             var currentCategory = CurrentVariantCategory.Text;
 
-            if (currentCategory == TextCollection.PictureSlidesLabText.VariantCategoryFontFamily)
+            if (currentCategory == PictureSlidesLabText.VariantCategoryFontFamily)
             {
                 styleOption.OptionName = "Customized";
                 styleOption.FontFamily = font;
@@ -187,12 +209,15 @@ namespace PowerPointLabs.PictureSlidesLab.ViewModel
 
         private void BindFontToVariant(string font)
         {
-            if (!IsAbleToBindProperty()) return;
+            if (!IsAbleToBindProperty())
+            {
+                return;
+            }
 
             var currentCategory = CurrentVariantCategory.Text;
             var styleVariant = _styleVariants[currentCategory][StylesVariationListSelectedId.Number];
 
-            if (currentCategory == TextCollection.PictureSlidesLabText.VariantCategoryFontFamily)
+            if (currentCategory == PictureSlidesLabText.VariantCategoryFontFamily)
             {
                 styleVariant.Set("OptionName", "Customized");
                 styleVariant.Set("FontFamily", font);
@@ -201,7 +226,10 @@ namespace PowerPointLabs.PictureSlidesLab.ViewModel
 
         private void BindSliderValueToStyle(int value)
         {
-            if (!IsAbleToBindProperty()) return;
+            if (!IsAbleToBindProperty())
+            {
+                return;
+            }
 
             var styleOption = _styleOptions[StylesVariationListSelectedId.Number];
             var currentCategory = CurrentVariantCategory.Text;
@@ -211,7 +239,10 @@ namespace PowerPointLabs.PictureSlidesLab.ViewModel
 
         private void BindSliderValueToVariant(int value)
         {
-            if (!IsAbleToBindProperty()) return;
+            if (!IsAbleToBindProperty())
+            {
+                return;
+            }
 
             var currentCategory = CurrentVariantCategory.Text;
             var styleVariant = _styleVariants[currentCategory][StylesVariationListSelectedId.Number];
@@ -230,8 +261,8 @@ namespace PowerPointLabs.PictureSlidesLab.ViewModel
             var propName = categoryName.Replace(" ", string.Empty);
 
             var styleOption = _styleOptions[StylesVariationListSelectedId.Number];
-            if ((styleOption.IsUseFrostedGlassBannerStyle && categoryName.Contains(TextCollection.PictureSlidesLabText.BannerHasEffect))
-                || (styleOption.IsUseFrostedGlassTextBoxStyle && categoryName.Contains(TextCollection.PictureSlidesLabText.TextBoxHasEffect)))
+            if ((styleOption.IsUseFrostedGlassBannerStyle && categoryName.Contains(PictureSlidesLabText.BannerHasEffect))
+                || (styleOption.IsUseFrostedGlassTextBoxStyle && categoryName.Contains(PictureSlidesLabText.TextBoxHasEffect)))
             {
                 propName = propName.Insert(0, "FrostedGlass");
             }

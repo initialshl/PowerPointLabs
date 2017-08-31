@@ -3,8 +3,11 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Linq;
-using System.Text;
+
 using PowerPointLabs.ActionFramework.Common.Log;
+using PowerPointLabs.EffectsLab;
+using PowerPointLabs.Utils;
+
 using Office = Microsoft.Office.Core;
 using PowerPoint = Microsoft.Office.Interop.PowerPoint;
 
@@ -19,7 +22,9 @@ namespace PowerPointLabs.Models
         private PowerPointSpotlightSlide(PowerPoint.Slide slide) : base(slide)
         {
             if (!slide.Name.Contains("PPTLabsSpotlight"))
+            {
                 _slide.Name = "PPTLabsSpotlight" + DateTime.Now.ToString("yyyyMMddHHmmssffff");
+            }
         }
 
         public static PowerPointSlide FromSlideFactory(PowerPoint.Slide slide)
@@ -40,10 +45,14 @@ namespace PowerPointLabs.Models
             List<PowerPoint.Shape> shapes = _slide.Shapes.Cast<PowerPoint.Shape>().ToList();
             var matchingShapes = shapes.Where(current => (HasExitAnimation(current)));
             foreach (PowerPoint.Shape s in matchingShapes)
+            {
                 s.Delete();
+            }
 
             foreach (PowerPoint.Shape s in _slide.Shapes)
+            {
                 DeleteShapeAnimations(s);
+            }
 
             DeleteSlideNotes();
             DeleteSlideMedia();
@@ -58,7 +67,9 @@ namespace PowerPointLabs.Models
             PowerPoint.Shape spotlightShape;
             
             if (spotShape.Type == Office.MsoShapeType.msoCallout)
+            {
                 isCallout = true;
+            }
 
             if (isCallout)
             {
@@ -128,8 +139,8 @@ namespace PowerPointLabs.Models
 
         private void CropSpotlightPictureToSlide(ref PowerPoint.Shape shapeToCrop)
         {
-            float scaleFactorWidth = PowerPointLabs.Utils.Graphics.GetScaleWidth(shapeToCrop);
-            float scaleFactorHeight = PowerPointLabs.Utils.Graphics.GetScaleHeight(shapeToCrop);
+            float scaleFactorWidth = ShapeUtil.GetScaleWidth(shapeToCrop);
+            float scaleFactorHeight = ShapeUtil.GetScaleHeight(shapeToCrop);
 
             if (shapeToCrop.Left < 0)
             {
@@ -153,16 +164,28 @@ namespace PowerPointLabs.Models
         {
             spotlightShape.Line.Visible = Office.MsoTriState.msoFalse;
             if (spotlightShape.HasTextFrame == Office.MsoTriState.msoTrue && spotlightShape.TextFrame.HasText == Office.MsoTriState.msoTrue)
+            {
                 spotlightShape.TextFrame.TextRange.Font.Color.RGB = 0xffffff;
+            }
+
             spotlightShape.Name = "SpotlightShape" + Guid.NewGuid().ToString();
         }
 
         private void AddRectangleShape()
         {
-            PowerPoint.Shape rectangleShape = Shapes.AddShape(Office.MsoAutoShapeType.msoShapeRectangle, (-SoftEdgePadding/2 * Spotlight.defaultSoftEdges), (-SoftEdgePadding/2 * Spotlight.defaultSoftEdges), (PowerPointPresentation.Current.SlideWidth + (SoftEdgePadding * Spotlight.defaultSoftEdges)), (PowerPointPresentation.Current.SlideHeight + (SoftEdgePadding * Spotlight.defaultSoftEdges)));
+            float softEdges = EffectsLabSettings.SpotlightSoftEdges;
+            Color color = EffectsLabSettings.SpotlightColor;
+            float transparency = EffectsLabSettings.SpotlightTransparency;
+
+            PowerPoint.Shape rectangleShape = Shapes.AddShape(
+                    Office.MsoAutoShapeType.msoShapeRectangle, 
+                    (-SoftEdgePadding/2 * softEdges), 
+                    (-SoftEdgePadding/2 * softEdges), 
+                    (PowerPointPresentation.Current.SlideWidth + (SoftEdgePadding * softEdges)), 
+                    (PowerPointPresentation.Current.SlideHeight + (SoftEdgePadding * softEdges)));
             rectangleShape.Fill.Solid();
-            rectangleShape.Fill.ForeColor.RGB = ColorTranslator.ToWin32(Spotlight.defaultColor);
-            rectangleShape.Fill.Transparency = Spotlight.defaultTransparency;
+            rectangleShape.Fill.ForeColor.RGB = ColorTranslator.ToWin32(color);
+            rectangleShape.Fill.Transparency = transparency;
             rectangleShape.Line.Visible = Office.MsoTriState.msoFalse;
             rectangleShape.Name = "SpotlightShape1";
             rectangleShape.ZOrder(Office.MsoZOrderCmd.msoSendToBack);
@@ -182,23 +205,32 @@ namespace PowerPointLabs.Models
             newRange.Select();
 
             PowerPoint.Selection currentSelection = Globals.ThisAddIn.Application.ActiveWindow.Selection;
+
+            // Save the original dimensions because ppPastePNG is resized in PowerPoint 2016
+            float originalWidth = currentSelection.ShapeRange[1].Width;
+            float originalHeight = currentSelection.ShapeRange[1].Height;
             currentSelection.Cut();
 
             PowerPoint.Shape spotlightPicture = this.Shapes.PasteSpecial(PowerPoint.PpPasteDataType.ppPastePNG)[1];
+            spotlightPicture.Width = originalWidth;
+            spotlightPicture.Height = originalHeight;
+
             return spotlightPicture;
         }
 
         private void FormatSpotlightPicture(PowerPoint.Shape spotlightPicture)
         {
+            float softEdges = EffectsLabSettings.SpotlightSoftEdges;
+
             spotlightPicture.PictureFormat.TransparencyColor = 0xffffff;
             spotlightPicture.PictureFormat.TransparentBackground = Office.MsoTriState.msoTrue;
-            spotlightPicture.Left = -SoftEdgePadding/2 * Spotlight.defaultSoftEdges;
-            spotlightPicture.Top = -SoftEdgePadding/2 * Spotlight.defaultSoftEdges;
+            spotlightPicture.Left = -SoftEdgePadding/2 * softEdges;
+            spotlightPicture.Top = -SoftEdgePadding/2 * softEdges;
             spotlightPicture.LockAspectRatio = Office.MsoTriState.msoFalse;
-            float incrementWidth = (SoftEdgePadding * Spotlight.defaultSoftEdges) / spotlightPicture.Width;
-            float incrementHeight = (SoftEdgePadding * Spotlight.defaultSoftEdges) / spotlightPicture.Height;
+            float incrementWidth = (SoftEdgePadding * softEdges) / spotlightPicture.Width;
+            float incrementHeight = (SoftEdgePadding * softEdges) / spotlightPicture.Height;
 
-            spotlightPicture.SoftEdge.Radius = Spotlight.defaultSoftEdges;
+            spotlightPicture.SoftEdge.Radius = softEdges;
             spotlightPicture.Shadow.Size = 0;
 
             spotlightPicture.Name = "SpotlightShape1";
