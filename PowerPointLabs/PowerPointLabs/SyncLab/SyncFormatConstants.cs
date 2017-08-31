@@ -1,5 +1,7 @@
 ﻿using System.Drawing;
 
+using PowerPointLabs.SyncLab.Views;
+
 namespace PowerPointLabs.SyncLab.ObjectFormats
 {
     public class SyncFormatConstants
@@ -44,13 +46,13 @@ namespace PowerPointLabs.SyncLab.ObjectFormats
                             new FormatTreeNode("Color", new Format(typeof(FillFormat))),
                             new FormatTreeNode("Transparency", new Format(typeof(FillTransparencyFormat)))),
                     new FormatTreeNode(
-                            "Line",                        
-                            new FormatTreeNode("Color", new Format(typeof(LineFillFormat))),
-                            new FormatTreeNode("Transparency", new Format(typeof(LineTransparencyFormat))),
+                            "Line",
                             new FormatTreeNode("Width", new Format(typeof(LineWeightFormat))),
                             new FormatTreeNode("Compound Type", new Format(typeof(LineCompoundTypeFormat))),
                             new FormatTreeNode("Dash Type", new Format(typeof(LineDashTypeFormat))),
-                            new FormatTreeNode("Arrow", new Format(typeof(LineArrowFormat)))),
+                            new FormatTreeNode("Arrow", new Format(typeof(LineArrowFormat))),
+                            new FormatTreeNode("Color", new Format(typeof(LineFillFormat))),
+                            new FormatTreeNode("Transparency", new Format(typeof(LineTransparencyFormat)))),
                     new FormatTreeNode(
                             "Size/Position",
                             new FormatTreeNode("Width", new Format(typeof(PositionWidthFormat))),

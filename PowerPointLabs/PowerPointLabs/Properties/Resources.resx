@@ -1,17 +1,17 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <root>
-  <!--
-    Microsoft ResX Schema
-
+  <!-- 
+    Microsoft ResX Schema 
+    
     Version 2.0
-
-    The primary goals of this format is to allow a simple XML format
-    that is mostly human readable. The generation and parsing of the
-    various data types are done through the TypeConverter classes
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
     associated with the data types.
-
+    
     Example:
-
+    
     ... ado.net/XML headers & schema ...
     <resheader name="resmimetype">text/microsoft-resx</resheader>
     <resheader name="version">2.0</resheader>
@@ -26,36 +26,36 @@
         <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
         <comment>This is a comment</comment>
     </data>
-
-    There are any number of "resheader" rows that contain simple
+                
+    There are any number of "resheader" rows that contain simple 
     name/value pairs.
-
-    Each data row contains a name, and value. The row also contains a
-    type or mimetype. Type corresponds to a .NET class that support
-    text/value conversion through the TypeConverter architecture.
-    Classes that don't support this are serialized and stored with the
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
     mimetype set.
-
-    The mimetype is used for serialized objects, and tells the
-    ResXResourceReader how to depersist the object. This is currently not
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
     extensible. For a given mimetype the value must be set accordingly:
-
-    Note - application/x-microsoft.net.object.binary.base64 is the format
-    that the ResXResourceWriter will generate, however the reader can
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
     read any of the formats listed below.
-
+    
     mimetype: application/x-microsoft.net.object.binary.base64
-    value   : The object must be serialized with
+    value   : The object must be serialized with 
             : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
             : and then encoded with base64 encoding.
-
+    
     mimetype: application/x-microsoft.net.object.soap.base64
-    value   : The object must be serialized with
+    value   : The object must be serialized with 
             : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
             : and then encoded with base64 encoding.
 
     mimetype: application/x-microsoft.net.object.bytearray.base64
-    value   : The object must be serialized into a byte array
+    value   : The object must be serialized into a byte array 
             : using a System.ComponentModel.TypeConverter
             : and then encoded with base64 encoding.
     -->
@@ -156,9 +156,6 @@
   </data>
   <data name="HighlightBackground" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\HighlightBackground.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="Help" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\Help.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="Logo" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Logo.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -337,9 +334,6 @@
   <data name="PptlabsContextMenu" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\PptlabsContextMenu.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="PictureSlidesLab" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\ImagesLab.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
   <data name="Down" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\icon-down.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
@@ -363,9 +357,6 @@
   </data>
   <data name="HideShape" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\HideShape.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="DrawingLab" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\DrawingLab.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="ChoosePicturesIcon" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\ChoosePicturesIcon.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -417,12 +408,6 @@
   </data>
   <data name="ResizeUnlock" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\ResizeLab\ResizeUnlock.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="PositionsLab" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\PositionsLab\PositionsLab.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="ResizeLab" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\ResizeLab\ResizeLab.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="SettingsGear" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\SettingsGear.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -488,10 +473,10 @@
     <value>..\Resources\ResizeLab\ResizeSymmetricTop.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="PslSettings" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\AgendaSettings1.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+    <value>..\Resources\AgendaSettings.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="PslRefresh" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\AgendaSync1.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+    <value>..\Resources\AgendaSync.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="AlignBottomDefaultIcon" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\PositionsLab\AlignBottomDefaultIcon.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -559,9 +544,6 @@
   <data name="DuplicateRotateIcon" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\PositionsLab\DuplicateRotateIcon.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="BlurSelected" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\EffectsLab\BlurSelected.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
   <data name="FlipVerticalIcon" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\PositionsLab\FlipVerticalIcon.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
@@ -616,9 +598,6 @@
   <data name="TimerLab" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\TimerLab.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="SyncLab" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\SyncLab.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
   <data name="CutOutShapeMenu" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\CutOutShapeMenu.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
@@ -643,25 +622,88 @@
   <data name="SyncLabPasteButton" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\SyncLabPasteButton.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="CaptionLabSmall" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\CaptionLabSmall.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="MergeIntoGroup" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\MergeIntoGroup.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="HelpSmall" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\HelpSmall.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="PasteLab" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\PasteLab.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="HighlightLabSmall" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\HighlightLabSmall.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="AnimationLab" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\AnimationLab.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="MoreLabs" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\MoreLabs.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="ZoomLab" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\ZoomLab.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="NarrationsLabSmall" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\NarrationsLabSmall.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="NarrationsLab" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\NarrationsLab.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="ZoomLabSmall" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\ZoomLabSmall.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="RecordAudio" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\RecordAudio.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="AnimationLabSmall" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\AnimationLabSmall.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="RemoveNotes" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\RemoveNotes.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="CaptionsLab" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\CaptionsLab.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="HighlightLab" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\HighlightLab.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="HelpMenu" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\HelpMenu.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Tutorial" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Tutorial.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="UserGuide" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\UserGuide.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="PositionsLab" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\PositionsLab.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ResizeLab" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\ResizeLab.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="SyncLab" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\SyncLab.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="PasteAtOriginalPosition" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\PasteAtOriginalPosition.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="PasteIntoGroup" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\PasteIntoGroup.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="PasteToFillSlide" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\PasteToFillSlide.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ReplaceWithClipboard" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\ReplaceWithClipboard.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="PasteAtCursorPosition" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\PasteAtCursorPosition.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="AnimationsGroup" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\AnimationsGroup.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="AudioGroup" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\AudioGroup.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="EffectsGroup" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\EffectsGroup.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="FormattingGroup" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\FormattingGroup.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="BlurBackground" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\BlurBackground.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="BlurSelected" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\BlurSelected.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="RecolorBackground" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\RecolorBackground.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="PictureSlidesLab" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\PictureSlidesLab.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
 </root>

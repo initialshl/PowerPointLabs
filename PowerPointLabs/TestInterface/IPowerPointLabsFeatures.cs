@@ -13,8 +13,6 @@ namespace TestInterface
         void Spotlight();
         void SetSpotlightProperties(float newTransparency, float newSoftEdge, Color newColor);
         void OpenSpotlightDialog();
-        void FitToWidth();
-        void FitToHeight();
         void ConvertToPic();
         void CropToSlide();
         void CropToSame();
@@ -37,20 +35,31 @@ namespace TestInterface
         // Effects Lab
         void TransparentEffect();
         void MagnifyingGlassEffect();
-        void BlurrinessOverlay(string feature, bool pressed);
+        void SetTintForBlurSelected(bool isTinted);
+        void SetTintForBlurRemainder(bool isTinted);
+        void SetTintForBlurBackground(bool isTinted);
         void BlurSelectedEffect();
         void BlurRemainderEffect();
+        void BlurBackgroundEffect();
         void GreyScaleRemainderEffect();
+        void BlackAndWhiteRemainderEffect();
         void GothamRemainderEffect();
         void SepiaRemainderEffect();
-        void BlurBackgroundEffect();
+        void GreyScaleBackgroundEffect();
         void BlackAndWhiteBackgroundEffect();
+        void GothamBackgroundEffect();
         void SepiaBackgroundEffect();
+
+        // Paste lab
+        void PasteToFillSlide();
+        void PasteAtOriginalPosition();
+        void PasteAtCursorPosition();
+        void PasteIntoGroup();
+        void ReplaceWithClipboard();
 
         IColorsLabController ColorsLab { get; }
         IShapesLabController ShapesLab { get; }
         IPositionsLabController PositionsLab { get; }
-        IHighlightLabController HighlightLab { get; }
         ISyncLabController SyncLab { get; }
         ITimerLabController TimerLab { get; }
     }

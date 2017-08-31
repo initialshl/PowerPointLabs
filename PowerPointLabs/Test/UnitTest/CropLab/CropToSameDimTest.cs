@@ -13,7 +13,7 @@ namespace Test.UnitTest.CropLab
 
         protected override string GetTestingSlideName()
         {
-            return "CropToSame.pptx";
+            return "CropLab\\CropToSame.pptx";
         }
 
         [TestMethod]
@@ -27,6 +27,7 @@ namespace Test.UnitTest.CropLab
             CropUnevenScaledImgSuccessfully();
             CropCroppedImgSuccessfully();
             CropCustomAnchorSuccessfully();
+            CropWithShapeAsReferenceSuccessfully();
         }
 
         #region Positive Test Cases
@@ -66,6 +67,11 @@ namespace Test.UnitTest.CropLab
             CropLabSettings.AnchorPosition = AnchorPosition.BottomRight;
             CropAndCompare(22, 23);
             CropLabSettings.AnchorPosition = AnchorPosition.Reference;
+        }
+
+        public void CropWithShapeAsReferenceSuccessfully()
+        {
+            CropAndCompare(33, 34);
         }
 
         public void CropAndCompare(int testSlideNo, int expectedSlideNo)

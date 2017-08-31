@@ -1,28 +1,40 @@
 ﻿using System;
-using System.Drawing;
-using System.Windows.Forms;
-using TestInterface;
-using Microsoft.Office.Interop.PowerPoint;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Test.Util;
-using Point = System.Drawing.Point;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+
 using PowerPointLabs;
+using PowerPointLabs.TextCollection;
+
+using TestInterface;
+
+using Test.Util;
 
 namespace Test.FunctionalTest
 {
     [TestClass]
     public class SyncLabTest : BaseFunctionalTest
     {
-        private const string UnrotatedRectangle = "Rectangle 3";
-        private const string Oval = "Oval 4";
+        private const int MaxRetry = 5;
+        private const int CategoryIndexPosition = 0;
+        private const int FormatItemIndexPosition = 1;
+
+        private const int OriginalSyncGroupToShapeSlideNo = 36;
+        private const int ExpectedSyncGroupToShapeSlideNo = 37;
+        private const int OriginalSyncShapeToGroupSlideNo = 38;
+        private const int ExpectedSyncShapeToGroupSlideNo = 39;
+
+        private const string Line = "Straight Connector 2";
         private const string RotatedArrow = "Right Arrow 5";
+        private const string Group = "Group 1";
+        private const string Oval = "Oval 4";
         private const string CopyFromShape = "CopyFrom";
+        private const string UnrotatedRectangle = "Rectangle 3";
 
         protected override string GetTestingSlideName()
         {
-            return "SyncLab.pptx";
+            return "SyncLab\\SyncLab.pptx";
         }
 
         [TestMethod]
@@ -38,46 +50,91 @@ namespace Test.FunctionalTest
 
         private void TestErrorDialogs(ISyncLabController syncLab)
         {
-            PpOperations.SelectSlide(4);
+            PpOperations.SelectSlide(OriginalSyncGroupToShapeSlideNo);
 
-            // no selection
-            MessageBoxUtil.ExpectMessageBoxWillPopUp(TextCollection.SyncLabErrorDialogTitle,
-                "Please select one item to copy.", syncLab.Copy, "Ok");
+            // no selection copy
+            MessageBoxUtil.ExpectMessageBoxWillPopUp(SyncLabText.ErrorDialogTitle,
+                "Please select one shape to copy.", syncLab.Copy, "Ok");
 
-            // 2 item selected
-            List<String> shapes = new List<string> { Oval, RotatedArrow };
+            // 2 item selected copy
+            List<String> shapes = new List<string> { Line, RotatedArrow };
             PpOperations.SelectShapes(shapes);
-            MessageBoxUtil.ExpectMessageBoxWillPopUp(TextCollection.SyncLabErrorDialogTitle,
-                "Please select one item to copy.", syncLab.Copy, "Ok");
+            MessageBoxUtil.ExpectMessageBoxWillPopUp(SyncLabText.ErrorDialogTitle,
+                "Please select one shape to copy.", syncLab.Copy, "Ok");
+
+            // group selected copy
+            PpOperations.SelectShape(Group);
+            MessageBoxUtil.ExpectMessageBoxWillPopUp(SyncLabText.ErrorDialogTitle,
+                "Please select one shape to copy.", syncLab.Copy, "Ok");
 
             // copy blank item for the paste error dialog test
-            PpOperations.SelectShape(CopyFromShape);    
-            syncLab.Copy();
-            syncLab.DialogClickOk();
+            PpOperations.SelectShape(Line);    
+            CopyStyle(syncLab);
 
-            PpOperations.SelectSlide(5);
-            MessageBoxUtil.ExpectMessageBoxWillPopUp(TextCollection.SyncLabErrorDialogTitle,
-                "Please select at least one item to apply.", () => syncLab.Sync(0), "Ok");
+            // no selection sync
+            PpOperations.SelectSlide(ExpectedSyncShapeToGroupSlideNo);
+            MessageBoxUtil.ExpectMessageBoxWillPopUp(SyncLabText.ErrorDialogTitle,
+                "Please select at least one item to apply this format to.", () => syncLab.Sync(0), "Ok");
         }
 
         private void TestSync(ISyncLabController syncLab)
         {
-            PpOperations.SelectSlide(4);
-            PpOperations.SelectShape(CopyFromShape);
+            Sync(syncLab, OriginalSyncGroupToShapeSlideNo, ExpectedSyncGroupToShapeSlideNo, CopyFromShape, RotatedArrow, 1, 0);
+            Sync(syncLab, OriginalSyncShapeToGroupSlideNo, ExpectedSyncShapeToGroupSlideNo, Line, Oval, 1, 4);
+        }
 
-            syncLab.Copy();
-            syncLab.DialogSelectItem(3, 2);
-            syncLab.DialogClickOk();
+        private void Sync(ISyncLabController syncLab, int originalSlide, int expectedSlide,
+                string fromShape, string toShape, int categoryPosition, int itemPosition)
+        {
+            PpOperations.SelectSlide(originalSlide);
+            PpOperations.SelectShape(fromShape);
 
-            PpOperations.SelectShape(UnrotatedRectangle);
+            CopyStyle(syncLab, categoryPosition, itemPosition);
+
+            PpOperations.SelectShape(toShape);
             syncLab.Sync(0);
 
-            var actualSlide = PpOperations.SelectSlide(4);
-            var actualShape = PpOperations.SelectShape(UnrotatedRectangle)[1];
-            var expectedSlide = PpOperations.SelectSlide(5);
-            var expectedShape = PpOperations.SelectShape(UnrotatedRectangle)[1];
+            IsSame(originalSlide, expectedSlide, toShape);
+        }
+
+        private void IsSame(int originalSlideNo, int expectedSlideNo, string shapeToCheck)
+        {
+            var actualSlide = PpOperations.SelectSlide(originalSlideNo);
+            var actualShape = PpOperations.SelectShape(shapeToCheck)[1];
+            var expectedSlide = PpOperations.SelectSlide(expectedSlideNo);
+            var expectedShape = PpOperations.SelectShape(shapeToCheck)[1];
             SlideUtil.IsSameLooking(expectedSlide, actualSlide);
             SlideUtil.IsSameShape(expectedShape, actualShape);
+        }
+
+        private void CopyStyle(ISyncLabController syncLab)
+        {
+            new Task(() =>
+            {
+                ThreadUtil.WaitFor(1000);
+                syncLab.DialogClickOk();
+            }).Start();
+            syncLab.Copy();
+        }
+
+        private void CopyStyle(ISyncLabController syncLab, int categoryPosition, int itemPosition)
+        {
+            int[,] dialogItems = new int[,] { { categoryPosition, itemPosition } };
+            CopyStyle(syncLab, dialogItems);
+        }
+
+        private void CopyStyle(ISyncLabController syncLab, int[,] dialogItems)
+        {
+            new Task(() =>
+            {
+                ThreadUtil.WaitFor(1000);
+                for (int i = 0; i < dialogItems.GetLength(0); i++)
+                {
+                    syncLab.DialogSelectItem(dialogItems[i, CategoryIndexPosition], dialogItems[i, FormatItemIndexPosition]);
+                }
+                syncLab.DialogClickOk();
+            }).Start();
+            syncLab.Copy();
         }
     }
 }

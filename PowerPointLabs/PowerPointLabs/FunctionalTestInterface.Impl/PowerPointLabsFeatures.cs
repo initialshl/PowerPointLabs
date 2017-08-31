@@ -2,7 +2,10 @@
 using System.Drawing;
 
 using PowerPointLabs.ActionFramework.Common.Extension;
+using PowerPointLabs.EffectsLab;
 using PowerPointLabs.FunctionalTestInterface.Impl.Controller;
+using PowerPointLabs.TextCollection;
+using PowerPointLabs.ZoomLab;
 using TestInterface;
 
 namespace PowerPointLabs.FunctionalTestInterface.Impl
@@ -25,11 +28,6 @@ namespace PowerPointLabs.FunctionalTestInterface.Impl
             get { return PositionsLabController.Instance; }
         }
 
-        public IHighlightLabController HighlightLab
-        {
-            get { return HighlightLabController.Instance; }
-        }
-
         public ISyncLabController SyncLab
         {
             get { return SyncLabController.Instance; }
@@ -47,73 +45,69 @@ namespace PowerPointLabs.FunctionalTestInterface.Impl
 
         public void AutoCrop()
         {
-            UIThreadExecutor.Execute(() =>
+            UIThreadExecutor.Execute((Action)(() =>
             {
-                var control = new RibbonControl("MoveCropShapeButton");
-                Ribbon.OnAction(control);
-            });
+                Ribbon.OnAction(new RibbonControl(CropLabText.CropToShapeTag));
+            }));
         }
 
         public void CropOutPadding()
         {
-            UIThreadExecutor.Execute(() =>
+            UIThreadExecutor.Execute((Action)(() =>
             {
-                var control = new RibbonControl("CropOutPaddingButton");
-                Ribbon.OnAction(control);
-            });
+                Ribbon.OnAction(new RibbonControl(CropLabText.CropOutPaddingTag));
+            }));
         }
 
         public void CropToAspectRatioW1H10()
         {
-            UIThreadExecutor.Execute(() =>
+            UIThreadExecutor.Execute((Action)(() =>
             {
                 var control = new RibbonControl("CropToAspectRatioOption1_10");
-                control.Tag = "CropToAspectRatio";
+                control.Tag = CropLabText.CropToAspectRatioTag;
                 Ribbon.OnAction(control);
-            });
+            }));
         }
 
         public void CropToSlide()
         {
-            var control = new RibbonControl("CropToSlideButton");
-            Ribbon.OnAction(control);
+            Ribbon.OnAction(new RibbonControl(CropLabText.CropToSlideTag));
         }
 
         public void CropToSame()
         {
-            var control = new RibbonControl("CropToSameButton");
-            Ribbon.OnAction(control);
+            Ribbon.OnAction(new RibbonControl(CropLabText.CropToSameDimensionsTag));
         }
 
         public void AutoAnimate()
         {
-            UIThreadExecutor.Execute(() =>
+            UIThreadExecutor.Execute((Action)(() =>
             {
-                Ribbon.AddAnimationButtonClick(new RibbonControl("AutoAnimate"));
-            });
+                Ribbon.OnAction(new RibbonControl(AnimationLabText.AddAnimationSlideTag));
+            }));
         }
 
         public void AnimateInSlide()
         {
-            UIThreadExecutor.Execute(() =>
+            UIThreadExecutor.Execute((Action)(() =>
             {
-                Ribbon.AddInSlideAnimationButtonClick(new RibbonControl("AnimateInSlide"));
-            });
+                Ribbon.OnAction(new RibbonControl(AnimationLabText.AnimateInSlideTag));
+            }));
         }
 
         public void AutoCaptions()
         {
-            UIThreadExecutor.Execute(() =>
+            UIThreadExecutor.Execute((Action)(() =>
             {
-                Ribbon.AddCaptionClick(new RibbonControl("AutoCaptions"));
-            });
+                Ribbon.OnAction(new RibbonControl(CaptionsLabText.AddCaptionsTag));
+            }));
         }
 
         public void Spotlight()
         {
             UIThreadExecutor.Execute(() =>
             {
-                Ribbon.SpotlightBtnClick(new RibbonControl("Spotlight"));
+                Ribbon.OnAction(new RibbonControl("AddSpotlight"));
             });
         }
 
@@ -121,7 +115,9 @@ namespace PowerPointLabs.FunctionalTestInterface.Impl
         {
             UIThreadExecutor.Execute(() =>
             {
-                Ribbon.SpotlightPropertiesEdited(newTransparency, newSoftEdge, newColor);
+                EffectsLabSettings.SpotlightTransparency = newTransparency;
+                EffectsLabSettings.SpotlightSoftEdges = newSoftEdge;
+                EffectsLabSettings.SpotlightColor = newColor;
             });
         }
 
@@ -129,234 +125,310 @@ namespace PowerPointLabs.FunctionalTestInterface.Impl
         {
             UIThreadExecutor.Execute(() =>
             {
-                Ribbon.SpotlightDialogButtonPressed(new RibbonControl("OpenSpotlightDialog"));
-            });
-        }
-
-        public void FitToWidth()
-        {
-            UIThreadExecutor.Execute(() =>
-            {
-                Ribbon.OnAction(new RibbonControl("fitToWidthShape"));
-            });
-        }
-
-        public void FitToHeight()
-        {
-            UIThreadExecutor.Execute(() =>
-            {
-                Ribbon.OnAction(new RibbonControl("fitToHeightShape"));
+                Ribbon.OnAction(new RibbonControl("SpotlightSettings"));
             });
         }
 
         public void ConvertToPic()
         {
-            UIThreadExecutor.Execute(() =>
+            UIThreadExecutor.Execute((Action)(() =>
             {
-                Ribbon.ConvertToPictureButtonClick(new RibbonControl("ConvertToPic"));
-            });
+                Ribbon.OnAction(new RibbonControl(ShortcutsLabText.ConvertToPictureTag));
+            }));
         }
 
         public void DrillDown()
         {
-            UIThreadExecutor.Execute(() =>
+            UIThreadExecutor.Execute((Action)(() =>
             {
-                Ribbon.AddZoomInButtonClick(new RibbonControl("DrillDown"));
-            });
+                Ribbon.OnAction(new RibbonControl(ZoomLabText.DrillDownTag));
+            }));
         }
 
         public void StepBack()
         {
-            UIThreadExecutor.Execute(() =>
+            UIThreadExecutor.Execute((Action)(() =>
             {
-                Ribbon.AddZoomOutButtonClick(new RibbonControl("StepBack"));
-            });
+                Ribbon.OnAction(new RibbonControl(ZoomLabText.StepBackTag));
+            }));
         }
 
         public void AddZoomToArea()
         {
-            UIThreadExecutor.Execute(() =>
+            UIThreadExecutor.Execute((Action)(() =>
             {
-                Ribbon.ZoomBtnClick(new RibbonControl("ZoomToArea"));
-            });
+                Ribbon.OnAction(new RibbonControl(ZoomLabText.ZoomToAreaTag));
+            }));
         }
 
         public void SetZoomProperties(bool backgroundChecked, bool multiSlideChecked)
         {
             UIThreadExecutor.Execute(() =>
             {
-                Ribbon.ZoomPropertiesEdited(backgroundChecked, multiSlideChecked);
+                ZoomLabSettings.BackgroundZoomChecked = backgroundChecked;
+                ZoomLabSettings.MultiSlideZoomChecked = multiSlideChecked;
             });
         }
 
         public void HighlightPoints()
         {
-            UIThreadExecutor.Execute(() =>
+            UIThreadExecutor.Execute((Action)(() =>
             {
-                Ribbon.HighlightBulletsTextButtonClick(new RibbonControl("HighlightPoints"));
-            });
+                Ribbon.OnAction(new RibbonControl(HighlightLabText.HighlightPointsTag));
+            }));
         }
 
         public void HighlightBackground()
         {
-            UIThreadExecutor.Execute(() =>
+            UIThreadExecutor.Execute((Action)(() =>
             {
-                Ribbon.HighlightBulletsBackgroundButtonClick(new RibbonControl("HighlightBackground"));
-            });
+                Ribbon.OnAction(new RibbonControl(HighlightLabText.HighlightBackgroundTag));
+            }));
         }
 
         public void HighlightFragments()
         {
-            UIThreadExecutor.Execute(() =>
+            UIThreadExecutor.Execute((Action)(() =>
             {
-                Ribbon.HighlightTextFragmentsButtonClick(new RibbonControl("HighlightFragments"));
-            });
+                Ribbon.OnAction(new RibbonControl(HighlightLabText.HighlightTextTag));
+            }));
+        }
+
+        public void RemoveHighlight()
+        {
+            UIThreadExecutor.Execute((Action)(() =>
+            {
+                Ribbon.OnAction(new RibbonControl(HighlightLabText.RemoveHighlightTag));
+            }));
         }
 
         public void AutoNarrate()
         {
-            UIThreadExecutor.Execute(() =>
+            UIThreadExecutor.Execute((Action)(() =>
             {
-                Ribbon.AddAudioClick(new RibbonControl("AutoNarrate"));
-            });
+                Ribbon.OnAction(new RibbonControl(NarrationsLabText.AddNarrationsTag));
+            }));
         }
 
         public void GenerateTextAgenda()
         {
-            UIThreadExecutor.Execute(() =>
+            UIThreadExecutor.Execute((Action)(() =>
             {
-                Ribbon.BulletPointAgendaClick(new RibbonControl("TextAgenda"));
-            });
+                Ribbon.OnAction(new RibbonControl(AgendaLabText.TextAgendaTag));
+            }));
         }
 
         public void GenerateVisualAgenda()
         {
-            UIThreadExecutor.Execute(() =>
+            UIThreadExecutor.Execute((Action)(() =>
             {
-                Ribbon.VisualAgendaClick(new RibbonControl("VisualAgenda"));
-            });
+                Ribbon.OnAction(new RibbonControl(AgendaLabText.VisualAgendaTag));
+            }));
         }
 
         public void GenerateBeamAgenda()
         {
-            UIThreadExecutor.Execute(() =>
+            UIThreadExecutor.Execute((Action)(() =>
             {
-                Ribbon.BeamAgendaClick(new RibbonControl("BeamAgenda"));
-            });
+                Ribbon.OnAction(new RibbonControl(AgendaLabText.BeamAgendaTag));
+            }));
         }
 
         public void RemoveAgenda()
         {
-            UIThreadExecutor.Execute(() =>
+            UIThreadExecutor.Execute((Action)(() =>
             {
-                Ribbon.RemoveAgendaClick(new RibbonControl("RemoveAgenda"));
-            });
+                Ribbon.OnAction(new RibbonControl(AgendaLabText.RemoveAgendaTag));
+            }));
         }
 
         public void SynchronizeAgenda()
         {
-            UIThreadExecutor.Execute(() =>
+            UIThreadExecutor.Execute((Action)(() =>
             {
-                Ribbon.UpdateAgendaClick(new RibbonControl("SyncAgenda"));
-            });
+                Ribbon.OnAction(new RibbonControl(AgendaLabText.UpdateAgendaTag));
+            }));
         }
 
         public void TransparentEffect()
         {
-            UIThreadExecutor.Execute(() =>
+            UIThreadExecutor.Execute((Action)(() =>
             {
-                Ribbon.TransparentEffectClick(new RibbonControl("TransparentEffect"));
-            });
+                Ribbon.OnAction(new RibbonControl(EffectsLabText.MakeTransparentTag));
+            }));
         }
 
         public void MagnifyingGlassEffect()
         {
-            UIThreadExecutor.Execute(() =>
+            UIThreadExecutor.Execute((Action)(() =>
             {
-                Ribbon.MagnifyGlassEffectClick(new RibbonControl("MagnifyingGlassEffect"));
-            });
+                Ribbon.OnAction(new RibbonControl(EffectsLabText.MagnifyTag));
+            }));
         }
-        
-        public void BlurrinessOverlay(string feature, bool pressed)
+
+        public void SetTintForBlurSelected(bool isTinted)
         {
-            UIThreadExecutor.Execute(() =>
-            {
-                var control = new RibbonControl(feature + TextCollection.DynamicMenuCheckBoxId);
-                control.Tag = "Blurriness";
-                Ribbon.OnCheckBoxAction(control, pressed);
-            });
+            EffectsLabSettings.IsTintSelected = isTinted;
+        }
+
+        public void SetTintForBlurRemainder(bool isTinted)
+        {
+            EffectsLabSettings.IsTintRemainder = isTinted;
+        }
+
+        public void SetTintForBlurBackground(bool isTinted)
+        {
+            EffectsLabSettings.IsTintBackground = isTinted;
         }
 
         public void BlurSelectedEffect()
         {
-            UIThreadExecutor.Execute(() =>
+            UIThreadExecutor.Execute((Action)(() =>
             {
-                var control = new RibbonControl("EffectsLabBlurSelectedOption90");
-                control.Tag = "Blurriness";
+                var control = new RibbonControl("BlurSelectedOption90");
+                control.Tag = EffectsLabText.BlurrinessTag;
                 Ribbon.OnAction(control);
-            });
+            }));
         }
 
         public void BlurRemainderEffect()
         {
-            UIThreadExecutor.Execute(() =>
+            UIThreadExecutor.Execute((Action)(() =>
             {
-                var control = new RibbonControl("EffectsLabBlurRemainderOption90");
-                control.Tag = "Blurriness";
+                var control = new RibbonControl("BlurRemainderOption90");
+                control.Tag = EffectsLabText.BlurrinessTag;
                 Ribbon.OnAction(control);
-            });
+            }));
+        }
+
+        public void BlurBackgroundEffect()
+        {
+            UIThreadExecutor.Execute((Action)(() =>
+            {
+                var control = new RibbonControl("BlurBackgroundOption90");
+                control.Tag = EffectsLabText.BlurrinessTag;
+                Ribbon.OnAction(control);
+            }));
         }
 
         public void GreyScaleRemainderEffect()
         {
-            UIThreadExecutor.Execute(() =>
+            UIThreadExecutor.Execute((Action)(() =>
             {
-                Ribbon.GreyScaleRemainderEffectClick(new RibbonControl("GreyScaleEffect"));
-            });
+                var control = new RibbonControl("GrayScaleRecolorRemainderMenu");
+                control.Tag = EffectsLabText.RecolorTag;
+                Ribbon.OnAction(control);
+            }));
         }
 
+        public void BlackAndWhiteRemainderEffect()
+        {
+            UIThreadExecutor.Execute((Action)(() =>
+            {
+                var control = new RibbonControl("BlackAndWhiteRecolorRemainderMenu");
+                control.Tag = EffectsLabText.RecolorTag;
+                Ribbon.OnAction(control);
+            }));
+        }
 
         public void GothamRemainderEffect()
         {
-            UIThreadExecutor.Execute(() =>
+            UIThreadExecutor.Execute((Action)(() =>
             {
-                Ribbon.GothamRemainderEffectClick(new RibbonControl("GothamEffect"));
-            });
+                var control = new RibbonControl("GothamRecolorRemainderMenu");
+                control.Tag = EffectsLabText.RecolorTag;
+                Ribbon.OnAction(control);
+            }));
         }
 
         public void SepiaRemainderEffect()
         {
-            UIThreadExecutor.Execute(() =>
+            UIThreadExecutor.Execute((Action)(() =>
             {
-                Ribbon.SepiaRemainderEffectClick(new RibbonControl("SepiaEffect"));
-            });
+                var control = new RibbonControl("SepiaRecolorRemainderMenu");
+                control.Tag = EffectsLabText.RecolorTag;
+                Ribbon.OnAction(control);
+            }));
         }
 
-
-        public void BlurBackgroundEffect()
+        public void GreyScaleBackgroundEffect()
         {
-            UIThreadExecutor.Execute(() =>
+            UIThreadExecutor.Execute((Action)(() =>
             {
-                var control = new RibbonControl("EffectsLabBlurBackgroundOption90");
-                control.Tag = "Blurriness";
+                var control = new RibbonControl("GrayScaleRecolorBackgroundMenu");
+                control.Tag = EffectsLabText.RecolorTag;
                 Ribbon.OnAction(control);
-            });
+            }));
         }
 
         public void BlackAndWhiteBackgroundEffect()
         {
-            UIThreadExecutor.Execute(() =>
+            UIThreadExecutor.Execute((Action)(() =>
             {
-                Ribbon.BlackWhiteBackgroundEffectClick(new RibbonControl("BlackAndWhiteEffect"));
-            });
+                var control = new RibbonControl("BlackAndWhiteRecolorBackgroundMenu");
+                control.Tag = EffectsLabText.RecolorTag;
+                Ribbon.OnAction(control);
+            }));
+        }
+
+        public void GothamBackgroundEffect()
+        {
+            UIThreadExecutor.Execute((Action)(() =>
+            {
+                var control = new RibbonControl("GothamRecolorBackgroundMenu");
+                control.Tag = EffectsLabText.RecolorTag;
+                Ribbon.OnAction(control);
+            }));
         }
 
         public void SepiaBackgroundEffect()
         {
-            UIThreadExecutor.Execute(() =>
+            UIThreadExecutor.Execute((Action)(() =>
             {
-                Ribbon.SepiaBackgroundEffectClick(new RibbonControl("SepiaEffect"));
-            });
+                var control = new RibbonControl("SepiaRecolorBackgroundMenu");
+                control.Tag = EffectsLabText.RecolorTag;
+                Ribbon.OnAction(control);
+            }));
+        }
+
+        public void PasteToFillSlide()
+        {
+            UIThreadExecutor.Execute((Action)(() =>
+            {
+                Ribbon.OnAction(new RibbonControl(PasteLabText.PasteToFillSlideTag));
+            }));
+        }
+
+        public void PasteAtCursorPosition()
+        {
+            UIThreadExecutor.Execute((Action)(() =>
+            {
+                Ribbon.OnAction(new RibbonControl(PasteLabText.PasteAtCursorPositionTag));
+            }));
+        }
+
+        public void PasteAtOriginalPosition()
+        {
+            UIThreadExecutor.Execute((Action)(() =>
+            {
+                Ribbon.OnAction(new RibbonControl(PasteLabText.PasteAtOriginalPositionTag));
+            }));
+        }
+
+        public void PasteIntoGroup()
+        {
+            UIThreadExecutor.Execute((Action)(() =>
+            {
+                Ribbon.OnAction(new RibbonControl(PasteLabText.PasteIntoGroupTag));
+            }));
+        }
+
+        public void ReplaceWithClipboard()
+        {
+            UIThreadExecutor.Execute((Action)(() =>
+            {
+                Ribbon.OnAction(new RibbonControl(PasteLabText.ReplaceWithClipboardTag));
+            }));
         }
     }
 }

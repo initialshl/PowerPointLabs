@@ -1,9 +1,5 @@
 ﻿using System;
 
-using Microsoft.Office.Interop.PowerPoint;
-
-using PowerPointLabs.ActionFramework.Common.Extension;
-
 namespace PowerPointLabs.ActionFramework.Common.Interface
 {
     /// <summary>
@@ -20,24 +16,11 @@ namespace PowerPointLabs.ActionFramework.Common.Interface
             catch (Exception e)
             {
                 Log.Logger.LogException(e, ribbonId);
-                Views.ErrorDialogWrapper.ShowDialog("PowerPointLabs", e.Message, e);
+                Views.ErrorDialogBox.ShowDialog("PowerPointLabs", e.Message, e);
                 return false;
             }
         }
 
         protected abstract bool GetEnabled(string ribbonId);
-        
-        protected bool HasPlaceholderInSelection()
-        {
-            var selection = this.GetCurrentSelection();
-            foreach (Shape shape in selection.ShapeRange)
-            {
-                if (shape.Type == Microsoft.Office.Core.MsoShapeType.msoPlaceholder)
-                {
-                    return true;
-                }
-            }
-            return false;
-        }
     }
 }

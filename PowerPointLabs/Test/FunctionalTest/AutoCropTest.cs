@@ -9,7 +9,7 @@ namespace Test.FunctionalTest
     {
         protected override string GetTestingSlideName()
         {
-            return "AutoCrop.pptx";
+            return "CropLab\\AutoCrop.pptx";
         }
 
         [TestMethod]
@@ -107,6 +107,7 @@ namespace Test.FunctionalTest
         }
 
         #endregion
+
         #region Negative Test Cases
 
         private void CropOnNothingUnsuccessfully()
